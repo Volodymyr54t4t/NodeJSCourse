@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профіль - Node.js Курс</title>
+    <link rel="stylesheet" href="/css/profile.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="profile-container">
+        <header class="profile-header">
+            <div class="header-content">
+                <h1>Node.js Курс</h1>
+                <div class="header-actions">
+                    <button id="backToCourse" class="btn-secondary">Повернутися до курсу</button>
+                    <button id="logoutBtn" class="btn-outline">Вийти</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="profile-main">
+            <div class="profile-sidebar">
+                <div class="user-card">
+                    <div class="user-avatar">
+                        <span id="userInitials">UN</span>
+                    </div>
+                    <div class="user-info">
+                        <h2 id="userName">Завантаження...</h2>
+                        <p id="userEmail">email@example.com</p>
+                        <div class="user-stats">
+                            <div class="stat-item">
+                                <span class="stat-number" id="completedLessons">0</span>
+                                <span class="stat-label">Уроків пройдено</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number" id="totalScore">0</span>
+                                <span class="stat-label">Загальний бал</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-card">
+                    <h3>Прогрес курсу</h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p class="progress-text">
+                        <span id="progressPercent">0</span>% завершено
+                    </p>
+                </div>
+            </div>
+
+            <div class="profile-content">
+                <div class="content-header">
+                    <h2>Мої досягнення</h2>
+                    <div class="filter-tabs">
+                        <button class="tab-btn active" data-tab="achievements">Досягнення</button>
+                        <button class="tab-btn" data-tab="progress">Прогрес</button>
+                        <button class="tab-btn" data-tab="settings">Налаштування</button>
+                    </div>
+                </div>
+
+                <!-- Achievements Tab -->
+                <div class="tab-content active" id="achievements">
+                    <div class="achievements-grid" id="achievementsGrid">
+                        <!-- Achievements will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Progress Tab -->
+                <div class="tab-content" id="progress">
+                    <div class="lessons-progress" id="lessonsProgress">
+                        <!-- Lessons progress will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div class="tab-content" id="settings">
+                    <div class="settings-section">
+                        <h3>Особисті дані</h3>
+                        <form id="profileForm">
+                            <div class="input-group">
+                                <label for="profileName">Ім'я</label>
+                                <input type="text" id="profileName" name="name" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="profileEmail">Email</label>
+                                <input type="email" id="profileEmail" name="email" required>
+                            </div>
+                            <button type="submit" class="btn-primary">Зберегти зміни</button>
+                        </form>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Зміна пароля</h3>
+                        <form id="passwordForm">
+                            <div class="input-group">
+                                <label for="currentPassword">Поточний пароль</label>
+                                <input type="password" id="currentPassword" name="currentPassword" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="newPassword">Новий пароль</label>
+                                <input type="password" id="newPassword" name="newPassword" required minlength="6">
+                            </div>
+                            <div class="input-group">
+                                <label for="confirmNewPassword">Підтвердіть новий пароль</label>
+                                <input type="password" id="confirmNewPassword" name="confirmNewPassword" required
+                                    minlength="6">
+                            </div>
+                            <button type="submit" class="btn-primary">Змінити пароль</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="notification" id="notification"></div>
+    <script src="/js/profile.js"></script>
+</body>
+
+</html>

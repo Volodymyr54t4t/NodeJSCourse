@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Авторизація - Node.js Курс</title>
+    <link rel="stylesheet" href="/css/auth.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1>Node.js Курс</h1>
+                <p>Увійдіть або створіть акаунт для продовження навчання</p>
+            </div>
+
+            <!-- Login Form -->
+            <div class="form-container" id="loginForm">
+                <h2>Вхід</h2>
+                <form id="loginFormElement">
+                    <div class="input-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" name="email" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="loginPassword">Пароль</label>
+                        <input type="password" id="loginPassword" name="password" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Увійти</button>
+                </form>
+                <p class="switch-form">
+                    Немає акаунту? <a href="#" id="showRegister">Зареєструватися</a>
+                </p>
+            </div>
+
+            <!-- Register Form -->
+            <div class="form-container hidden" id="registerForm">
+                <h2>Реєстрація</h2>
+                <form id="registerFormElement">
+                    <div class="input-group">
+                        <label for="registerName">Ім'я</label>
+                        <input type="text" id="registerName" name="name" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="registerEmail">Email</label>
+                        <input type="email" id="registerEmail" name="email" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="registerPassword">Пароль</label>
+                        <input type="password" id="registerPassword" name="password" required minlength="6">
+                    </div>
+                    <div class="input-group">
+                        <label for="confirmPassword">Підтвердіть пароль</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
+                    </div>
+                    <button type="submit" class="btn-primary">Зареєструватися</button>
+                </form>
+                <p class="switch-form">
+                    Вже є акаунт? <a href="#" id="showLogin">Увійти</a>
+                </p>
+            </div>
+        </div>
+
+        <div class="features-section">
+            <h3>Що вас чекає в курсі:</h3>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">🚀</div>
+                    <h4>10 Практичних Уроків</h4>
+                    <p>Від основ до продвинутих тем</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">💻</div>
+                    <h4>Реальні Проекти</h4>
+                    <p>CLI додатки, REST API, чат</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🎯</div>
+                    <h4>Тести та Завдання</h4>
+                    <p>Перевірте свої знання</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📈</div>
+                    <h4>Прогрес Навчання</h4>
+                    <p>Відстежуйте свої досягнення</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+    <script src="/js/auth.js"></script>
+</body>
+
+</html>

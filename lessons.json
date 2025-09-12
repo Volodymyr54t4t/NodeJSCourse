@@ -1,0 +1,567 @@
+[
+  {
+    "id": 1,
+    "title": "Основи Node.js та встановлення",
+    "description": "Знайомство з Node.js, встановлення та перші кроки",
+    "difficulty": "Початковий",
+    "category": "basics",
+    "duration": "45 хв",
+    "content": "<p><strong>Node.js</strong> - це середовище виконання JavaScript, побудоване на движку V8 від Chrome. Воно дозволяє виконувати JavaScript код поза браузером.</p><p>Основні переваги Node.js:</p><ul><li><strong>Швидкість</strong> - використовує V8 движок від Google</li><li><strong>Асинхронність</strong> - неблокуючі операції вводу/виводу</li><li><strong>NPM</strong> - величезна екосистема пакетів</li><li><strong>Єдина мова</strong> - JavaScript для фронтенду та бекенду</li></ul><p>Node.js ідеально підходить для створення веб-серверів, API, мікросервісів та інструментів командного рядка.</p>",
+    "example": "// Перевірка версії Node.js\nconsole.log('Версія Node.js:', process.version);\nconsole.log('Платформа:', process.platform);\n\n// Робота з глобальними об'єктами\nconsole.log('Поточна директорія:', process.cwd());\nconsole.log('Аргументи командного рядка:', process.argv);\n\n// Простий приклад асинхронності\nsetTimeout(() => {\n  console.log('Це виконається через 1 секунду');\n}, 1000);\n\nconsole.log('Це виконається одразу');",
+    "test": {
+      "questions": [
+        {
+          "question": "Що таке Node.js?",
+          "options": [
+            "Браузер для JavaScript",
+            "Середовище виконання JavaScript поза браузером",
+            "Бібліотека для створення веб-сайтів",
+            "База даних"
+          ],
+          "correctAnswer": 1
+        },
+        {
+          "question": "На якому движку побудований Node.js?",
+          "options": ["SpiderMonkey", "Chakra", "V8", "JavaScriptCore"],
+          "correctAnswer": 2
+        },
+        {
+          "question": "Яка основна перевага Node.js?",
+          "options": [
+            "Синхронне виконання коду",
+            "Асинхронні неблокуючі операції",
+            "Повільна швидкість виконання",
+            "Обмежена функціональність"
+          ],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Що таке NPM?",
+          "options": [
+            "Менеджер пакетів для Node.js",
+            "Текстовий редактор",
+            "База даних",
+            "Веб-браузер"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "question": "Який глобальний об'єкт містить інформацію про поточний процес?",
+          "options": ["global", "window", "process", "console"],
+          "correctAnswer": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": 2,
+    "title": "Модулі та файлова система",
+    "description": "Робота з модулями, require/import та файловою системою",
+    "difficulty": "Початковий",
+    "category": "basics",
+    "duration": "60 хв",
+    "content": "<p><strong>Модульна система</strong> в Node.js дозволяє організовувати код у окремі файли та повторно використовувати функціональність.</p><p>Типи модулів:</p><ul><li><strong>Вбудовані модулі</strong> - fs, path, http, url тощо</li><li><strong>Локальні модулі</strong> - створені вами файли</li><li><strong>Зовнішні модулі</strong> - встановлені через NPM</li></ul><p>Файлова система (fs) - один з найважливіших модулів для роботи з файлами та директоріями.</p>",
+    "example": "// Підключення вбудованих модулів\nconst fs = require('fs');\nconst path = require('path');\n\n// Синхронне читання файлу\ntry {\n  const data = fs.readFileSync('package.json', 'utf8');\n  console.log('Вміст package.json:', data);\n} catch (error) {\n  console.log('Файл не знайдено');\n}\n\n// Асинхронне читання файлу\nfs.readFile('package.json', 'utf8', (err, data) => {\n  if (err) {\n    console.log('Помилка читання файлу:', err.message);\n    return;\n  }\n  console.log('Асинхронне читання успішне');\n});\n\n// Робота з шляхами\nconst filePath = path.join(__dirname, 'data', 'users.json');\nconsole.log('Повний шлях:', filePath);\nconsole.log('Розширення файлу:', path.extname(filePath));",
+    "test": {
+      "questions": [
+        {
+          "question": "Яка функція використовується для підключення модулів в Node.js?",
+          "options": ["import()", "include()", "require()", "load()"],
+          "correctAnswer": 2
+        },
+        {
+          "question": "Який модуль використовується для роботи з файловою системою?",
+          "options": ["file", "fs", "filesystem", "io"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Яка різниця між readFileSync та readFile?",
+          "options": [
+            "Немає різниці",
+            "readFileSync - асинхронна, readFile - синхронна",
+            "readFileSync - синхронна, readFile - асинхронна",
+            "readFile працює тільки з текстовими файлами"
+          ],
+          "correctAnswer": 2
+        },
+        {
+          "question": "Який модуль використовується для роботи зі шляхами файлів?",
+          "options": ["url", "path", "dir", "route"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Що означає __dirname?",
+          "options": [
+            "Ім'я поточного файлу",
+            "Шлях до поточної директорії",
+            "Розмір директорії",
+            "Список файлів у директорії"
+          ],
+          "correctAnswer": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": 3,
+    "title": "HTTP сервер та маршрутизація",
+    "description": "Створення веб-серверів з використанням HTTP модуля",
+    "difficulty": "Початковий",
+    "category": "basics",
+    "duration": "75 хв",
+    "content": "<p><strong>HTTP сервер</strong> - це основа веб-додатків в Node.js. Вбудований модуль http дозволяє створювати сервери для обробки HTTP запитів.</p><p>Основні концепції:</p><ul><li><strong>Request (запит)</strong> - дані, що надходять від клієнта</li><li><strong>Response (відповідь)</strong> - дані, що відправляються клієнту</li><li><strong>Headers</strong> - метадані запиту та відповіді</li><li><strong>Status Codes</strong> - коди стану HTTP</li></ul><p>Маршрутизація дозволяє обробляти різні URL шляхи та HTTP методи.</p>",
+    "example": "// Простий HTTP сервер з маршрутизацією\nconst http = require('http');\nconst url = require('url');\n\nconst server = http.createServer((req, res) => {\n  const parsedUrl = url.parse(req.url, true);\n  const path = parsedUrl.pathname;\n  const method = req.method;\n  \n  // Встановлення заголовків\n  res.setHeader('Content-Type', 'application/json; charset=utf-8');\n  res.setHeader('Access-Control-Allow-Origin', '*');\n  \n  // Маршрутизація\n  if (path === '/' && method === 'GET') {\n    res.statusCode = 200;\n    res.end(JSON.stringify({ message: 'Головна сторінка' }));\n  } else if (path === '/api/users' && method === 'GET') {\n    res.statusCode = 200;\n    res.end(JSON.stringify({ users: ['Іван', 'Марія', 'Петро'] }));\n  } else if (path === '/api/users' && method === 'POST') {\n    let body = '';\n    req.on('data', chunk => {\n      body += chunk.toString();\n    });\n    req.on('end', () => {\n      res.statusCode = 201;\n      res.end(JSON.stringify({ message: 'Користувач створений', data: JSON.parse(body) }));\n    });\n  } else {\n    res.statusCode = 404;\n    res.end(JSON.stringify({ error: 'Сторінка не знайдена' }));\n  }\n});\n\nserver.listen(3000, () => {\n  console.log('Сервер запущено на http://localhost:3000');\n});",
+    "test": {
+      "questions": [
+        {
+          "question": "Який модуль використовується для створення HTTP сервера?",
+          "options": ["server", "web", "http", "net"],
+          "correctAnswer": 2
+        },
+        {
+          "question": "Який HTTP статус код означає 'успіх'?",
+          "options": ["404", "500", "200", "301"],
+          "correctAnswer": 2
+        },
+        {
+          "question": "Яка функція використовується для створення сервера?",
+          "options": [
+            "http.server()",
+            "http.create()",
+            "http.createServer()",
+            "http.newServer()"
+          ],
+          "correctAnswer": 2
+        },
+        {
+          "question": "Який HTTP метод використовується для отримання даних?",
+          "options": ["POST", "PUT", "GET", "DELETE"],
+          "correctAnswer": 2
+        },
+        {
+          "question": "Що означає статус код 404?",
+          "options": [
+            "Успіх",
+            "Помилка сервера",
+            "Не знайдено",
+            "Неавторизований"
+          ],
+          "correctAnswer": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": 4,
+    "title": "Асинхронне програмування",
+    "description": "Callbacks, Promises, async/await та обробка асинхронних операцій",
+    "difficulty": "Середній",
+    "category": "advanced",
+    "duration": "90 хв",
+    "content": "<p><strong>Асинхронне програмування</strong> - ключова особливість Node.js, що дозволяє виконувати операції без блокування основного потоку.</p><p>Способи роботи з асинхронністю:</p><ul><li><strong>Callbacks</strong> - функції зворотного виклику</li><li><strong>Promises</strong> - об'єкти для роботи з асинхронними операціями</li><li><strong>Async/Await</strong> - синтаксичний цукор для Promises</li><li><strong>Event Loop</strong> - механізм обробки подій</li></ul><p>Правильне розуміння асинхронності критично важливе для ефективної розробки на Node.js.</p>",
+    "example": "// Callback приклад\nfunction readFileCallback(filename, callback) {\n  setTimeout(() => {\n    if (filename === 'existing.txt') {\n      callback(null, 'Вміст файлу');\n    } else {\n      callback(new Error('Файл не знайдено'));\n    }\n  }, 1000);\n}\n\n// Promise приклад\nfunction readFilePromise(filename) {\n  return new Promise((resolve, reject) => {\n    setTimeout(() => {\n      if (filename === 'existing.txt') {\n        resolve('Вміст файлу');\n      } else {\n        reject(new Error('Файл не знайдено'));\n      }\n    }, 1000);\n  });\n}\n\n// Async/Await приклад\nasync function readFileAsync() {\n  try {\n    const data = await readFilePromise('existing.txt');\n    console.log('Дані:', data);\n  } catch (error) {\n    console.log('Помилка:', error.message);\n  }\n}\n\n// Promise.all для паралельного виконання\nasync function readMultipleFiles() {\n  try {\n    const results = await Promise.all([\n      readFilePromise('file1.txt'),\n      readFilePromise('file2.txt'),\n      readFilePromise('file3.txt')\n    ]);\n    console.log('Всі файли прочитано:', results);\n  } catch (error) {\n    console.log('Помилка при читанні файлів:', error.message);\n  }\n}\n\nreadFileAsync();\nreadMultipleFiles();",
+    "test": {
+      "questions": [
+        {
+          "question": "Що таке callback функція?",
+          "options": [
+            "Функція, що викликається автоматично",
+            "Функція, що передається як аргумент іншій функції",
+            "Функція для роботи з базою даних",
+            "Функція для обробки помилок"
+          ],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Який стан може мати Promise?",
+          "options": [
+            "pending, resolved, rejected",
+            "pending, fulfilled, rejected",
+            "waiting, done, error",
+            "start, middle, end"
+          ],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Яке ключове слово використовується для очікування Promise?",
+          "options": ["wait", "await", "promise", "then"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Що робить Promise.all()?",
+          "options": [
+            "Виконує промиси послідовно",
+            "Виконує промиси паралельно і чекає всіх",
+            "Виконує тільки перший проміс",
+            "Скасовує всі промиси"
+          ],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Яка функція використовується для обробки помилок в Promise?",
+          "options": ["error()", "fail()", "catch()", "handle()"],
+          "correctAnswer": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": 5,
+    "title": "NPM та управління пакетами",
+    "description": "Робота з NPM, package.json, встановлення та створення пакетів",
+    "difficulty": "Початковий",
+    "category": "basics",
+    "duration": "60 хв",
+    "content": "<p><strong>NPM (Node Package Manager)</strong> - це менеджер пакетів для Node.js, що дозволяє легко встановлювати, оновлювати та управляти залежностями проекту.</p><p>Основні команди NPM:</p><ul><li><strong>npm init</strong> - створення нового проекту</li><li><strong>npm install</strong> - встановлення пакетів</li><li><strong>npm update</strong> - оновлення пакетів</li><li><strong>npm run</strong> - запуск скриптів</li></ul><p>Файл package.json містить метадані проекту та список залежностей.</p>",
+    "example": "// Приклад package.json\nconst packageExample = {\n  \"name\": \"my-node-app\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Мій перший Node.js додаток\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"start\": \"node index.js\",\n    \"dev\": \"nodemon index.js\",\n    \"test\": \"jest\",\n    \"build\": \"webpack --mode production\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.0\",\n    \"lodash\": \"^4.17.21\",\n    \"mongoose\": \"^6.3.0\"\n  },\n  \"devDependencies\": {\n    \"nodemon\": \"^2.0.15\",\n    \"jest\": \"^27.5.1\",\n    \"webpack\": \"^5.70.0\"\n  },\n  \"keywords\": [\"node\", \"javascript\", \"backend\"],\n  \"author\": \"Ваше ім'я\",\n  \"license\": \"MIT\"\n};\n\nconsole.log('Приклад package.json:', JSON.stringify(packageExample, null, 2));\n\n// Використання встановленого пакету\n// const _ = require('lodash');\n// const numbers = [1, 2, 3, 4, 5];\n// console.log('Сума:', _.sum(numbers));\n// console.log('Унікальні значення:', _.uniq([1, 2, 2, 3, 3, 4]));",
+    "test": {
+      "questions": [
+        {
+          "question": "Що означає NPM?",
+          "options": [
+            "Node Project Manager",
+            "Node Package Manager",
+            "New Programming Method",
+            "Network Protocol Manager"
+          ],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Яка команда створює новий Node.js проект?",
+          "options": ["npm create", "npm new", "npm init", "npm start"],
+          "correctAnswer": 2
+        },
+        {
+          "question": "Де зберігається інформація про залежності проекту?",
+          "options": [
+            "dependencies.json",
+            "package.json",
+            "node_modules.json",
+            "config.json"
+          ],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Яка різниця між dependencies та devDependencies?",
+          "options": [
+            "Немає різниці",
+            "dependencies для продакшену, devDependencies для розробки",
+            "dependencies для розробки, devDependencies для продакшену",
+            "devDependencies встановлюються автоматично"
+          ],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Що означає символ ^ у версії пакету?",
+          "options": [
+            "Точна версія",
+            "Мінімальна версія",
+            "Сумісні оновлення (minor та patch)",
+            "Будь-яка версія"
+          ],
+          "correctAnswer": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": 6,
+    "title": "Express.js Framework",
+    "description": "Вивчення популярного веб-фреймворку Express.js для Node.js",
+    "difficulty": "Середній",
+    "category": "advanced",
+    "duration": "120 хв",
+    "content": "<p><strong>Express.js</strong> - це мінімалістичний та гнучкий веб-фреймворк для Node.js, що надає потужний набір функцій для веб та мобільних додатків.</p><p>Основні можливості Express.js:</p><ul><li><strong>Middleware</strong> - функції, що виконуються між запитом та відповіддю</li><li><strong>Routing</strong> - визначення кінцевих точок додатку</li><li><strong>Template engines</strong> - підтримка шаблонізаторів</li><li><strong>Static files</strong> - обслуговування статичних файлів</li></ul><p>Express.js значно спрощує створення веб-додатків та API.</p>",
+    "example": "// Базовий Express.js сервер\nconst express = require('express');\nconst app = express();\nconst port = 3000;\n\n// Middleware для парсингу JSON\napp.use(express.json());\napp.use(express.urlencoded({ extended: true }));\n\n// Middleware для логування\napp.use((req, res, next) => {\n  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);\n  next();\n});\n\n// Статичні файли\napp.use('/static', express.static('public'));\n\n// Маршрути\napp.get('/', (req, res) => {\n  res.json({ message: 'Привіт від Express!' });\n});\n\napp.get('/api/users', (req, res) => {\n  const users = [\n    { id: 1, name: 'Іван', email: 'ivan@example.com' },\n    { id: 2, name: 'Марія', email: 'maria@example.com' }\n  ];\n  res.json(users);\n});\n\napp.post('/api/users', (req, res) => {\n  const { name, email } = req.body;\n  const newUser = {\n    id: Date.now(),\n    name,\n    email\n  };\n  res.status(201).json(newUser);\n});\n\n// Обробка помилок\napp.use((err, req, res, next) => {\n  console.error(err.stack);\n  res.status(500).json({ error: 'Щось пішло не так!' });\n});\n\n// 404 обробник\napp.use('*', (req, res) => {\n  res.status(404).json({ error: 'Маршрут не знайдено' });\n});\n\napp.listen(port, () => {\n  console.log(`Сервер запущено на http://localhost:${port}`);\n});",
+    "test": {
+      "questions": [
+        {
+          "question": "Що таке middleware в Express.js?",
+          "options": [
+            "База даних",
+            "Функції, що виконуються між запитом та відповіддю",
+            "Статичні файли",
+            "Шаблони сторінок"
+          ],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Яка функція використовується для створення Express додатку?",
+          "options": [
+            "express.create()",
+            "express.app()",
+            "express()",
+            "express.new()"
+          ],
+          "correctAnswer": 2
+        },
+        {
+          "question": "Який метод використовується для обробки GET запитів?",
+          "options": [
+            "app.get()",
+            "app.request()",
+            "app.receive()",
+            "app.handle()"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "question": "Що робить функція next() в middleware?",
+          "options": [
+            "Завершує запит",
+            "Переходить до наступного middleware",
+            "Повертає помилку",
+            "Перезапускає сервер"
+          ],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Який middleware використовується для парсингу JSON?",
+          "options": [
+            "express.json()",
+            "express.parser()",
+            "express.body()",
+            "express.decode()"
+          ],
+          "correctAnswer": 0
+        }
+      ]
+    }
+  },
+  {
+    "id": 7,
+    "title": "Робота з базами даних (MongoDB)",
+    "description": "Підключення та робота з MongoDB за допомогою Mongoose",
+    "difficulty": "Середній",
+    "category": "advanced",
+    "duration": "135 хв",
+    "content": "<p><strong>MongoDB</strong> - це NoSQL база даних, що зберігає дані у форматі документів (BSON). Mongoose - це ODM (Object Document Mapper) для MongoDB та Node.js.</p><p>Основні концепції:</p><ul><li><strong>Collections</strong> - аналог таблиць у реляційних БД</li><li><strong>Documents</strong> - записи в колекції</li><li><strong>Schema</strong> - структура документа</li><li><strong>Models</strong> - конструктори документів</li></ul><p>Mongoose надає схеми, валідацію, middleware та багато інших корисних функцій.</p>",
+    "example": "// Підключення до MongoDB з Mongoose\nconst mongoose = require('mongoose');\n\n// Підключення до бази даних\nmongoose.connect('mongodb://localhost:27017/myapp', {\n  useNewUrlParser: true,\n  useUnifiedTopology: true\n});\n\n// Схема користувача\nconst userSchema = new mongoose.Schema({\n  name: {\n    type: String,\n    required: [true, 'Ім\\'я є обов\\'язковим'],\n    trim: true,\n    minlength: 2,\n    maxlength: 50\n  },\n  email: {\n    type: String,\n    required: true,\n    unique: true,\n    lowercase: true,\n    match: [/^\\S+@\\S+\\.\\S+$/, 'Невірний формат email']\n  },\n  age: {\n    type: Number,\n    min: 0,\n    max: 120\n  },\n  createdAt: {\n    type: Date,\n    default: Date.now\n  },\n  isActive: {\n    type: Boolean,\n    default: true\n  }\n});\n\n// Middleware для схеми\nuserSchema.pre('save', function(next) {\n  console.log('Збереження користувача:', this.name);\n  next();\n});\n\n// Методи схеми\nuserSchema.methods.getFullInfo = function() {\n  return `${this.name} (${this.email})`;\n};\n\n// Модель\nconst User = mongoose.model('User', userSchema);\n\n// CRUD операції\nasync function databaseOperations() {\n  try {\n    // Створення користувача\n    const newUser = new User({\n      name: 'Іван Петренко',\n      email: 'ivan@example.com',\n      age: 25\n    });\n    \n    const savedUser = await newUser.save();\n    console.log('Користувач створений:', savedUser.getFullInfo());\n    \n    // Пошук користувачів\n    const users = await User.find({ isActive: true });\n    console.log('Активні користувачі:', users.length);\n    \n    // Оновлення\n    await User.findByIdAndUpdate(savedUser._id, { age: 26 });\n    \n    // Видалення\n    await User.findByIdAndDelete(savedUser._id);\n    \n  } catch (error) {\n    console.error('Помилка бази даних:', error.message);\n  }\n}\n\ndatabaseOperations();",
+    "test": {
+      "questions": [
+        {
+          "question": "Що таке MongoDB?",
+          "options": [
+            "Реляційна база даних",
+            "NoSQL документо-орієнтована база даних",
+            "Веб-сервер",
+            "Мова програмування"
+          ],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Що таке Mongoose?",
+          "options": [
+            "База даних",
+            "ODM для MongoDB та Node.js",
+            "Веб-фреймворк",
+            "Тестова бібліотека"
+          ],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Що визначає Schema в Mongoose?",
+          "options": [
+            "Підключення до бази даних",
+            "Структуру документа",
+            "Методи HTTP",
+            "Маршрути додатку"
+          ],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Який метод використовується для збереження документа?",
+          "options": [
+            "document.store()",
+            "document.save()",
+            "document.insert()",
+            "document.create()"
+          ],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Що робить middleware pre('save')?",
+          "options": [
+            "Виконується після збереження",
+            "Виконується перед збереженням",
+            "Видаляє документ",
+            "Валідує дані"
+          ],
+          "correctAnswer": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": 8,
+    "title": "Аутентифікація та безпека",
+    "description": "JWT токени, хешування паролів, middleware для аутентифікації",
+    "difficulty": "Складний",
+    "category": "advanced",
+    "duration": "150 хв",
+    "content": "<p><strong>Аутентифікація та безпека</strong> - критично важливі аспекти веб-додатків. Необхідно правильно зберігати паролі, управляти сесіями та захищати API.</p><p>Основні концепції безпеки:</p><ul><li><strong>Хешування паролів</strong> - bcrypt для безпечного зберігання</li><li><strong>JWT токени</strong> - для stateless аутентифікації</li><li><strong>Middleware</strong> - для перевірки авторизації</li><li><strong>CORS</strong> - контроль доступу між доменами</li></ul><p>Правильна реалізація безпеки захищає від атак та витоку даних.</p>",
+    "example": "// Система аутентифікації з JWT\nconst express = require('express');\nconst bcrypt = require('bcrypt');\nconst jwt = require('jsonwebtoken');\nconst rateLimit = require('express-rate-limit');\n\nconst app = express();\napp.use(express.json());\n\n// Rate limiting\nconst authLimiter = rateLimit({\n  windowMs: 15 * 60 * 1000, // 15 хвилин\n  max: 5, // максимум 5 спроб\n  message: 'Забагато спроб входу, спробуйте пізніше'\n});\n\n// Секретний ключ (в реальному додатку - в змінних оточення)\nconst JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';\n\n// Імітація бази даних користувачів\nconst users = [];\n\n// Реєстрація користувача\napp.post('/api/register', async (req, res) => {\n  try {\n    const { email, password, name } = req.body;\n    \n    // Перевірка чи існує користувач\n    const existingUser = users.find(u => u.email === email);\n    if (existingUser) {\n      return res.status(400).json({ error: 'Користувач вже існує' });\n    }\n    \n    // Хешування пароля\n    const saltRounds = 12;\n    const hashedPassword = await bcrypt.hash(password, saltRounds);\n    \n    // Створення користувача\n    const user = {\n      id: Date.now(),\n      email,\n      name,\n      password: hashedPassword,\n      createdAt: new Date()\n    };\n    \n    users.push(user);\n    \n    // Генерація JWT токену\n    const token = jwt.sign(\n      { userId: user.id, email: user.email },\n      JWT_SECRET,\n      { expiresIn: '24h' }\n    );\n    \n    res.status(201).json({\n      message: 'Користувач створений успішно',\n      token,\n      user: { id: user.id, email: user.email, name: user.name }\n    });\n    \n  } catch (error) {\n    res.status(500).json({ error: 'Помилка сервера' });\n  }\n});\n\n// Вхід користувача\napp.post('/api/login', authLimiter, async (req, res) => {\n  try {\n    const { email, password } = req.body;\n    \n    // Пошук користувача\n    const user = users.find(u => u.email === email);\n    if (!user) {\n      return res.status(401).json({ error: 'Невірні дані для входу' });\n    }\n    \n    // Перевірка пароля\n    const isValidPassword = await bcrypt.compare(password, user.password);\n    if (!isValidPassword) {\n      return res.status(401).json({ error: 'Невірні дані для входу' });\n    }\n    \n    // Генерація токену\n    const token = jwt.sign(\n      { userId: user.id, email: user.email },\n      JWT_SECRET,\n      { expiresIn: '24h' }\n    );\n    \n    res.json({\n      message: 'Успішний вхід',\n      token,\n      user: { id: user.id, email: user.email, name: user.name }\n    });\n    \n  } catch (error) {\n    res.status(500).json({ error: 'Помилка сервера' });\n  }\n});\n\n// Middleware для перевірки токену\nfunction authenticateToken(req, res, next) {\n  const authHeader = req.headers['authorization'];\n  const token = authHeader && authHeader.split(' ')[1];\n  \n  if (!token) {\n    return res.status(401).json({ error: 'Токен доступу відсутній' });\n  }\n  \n  jwt.verify(token, JWT_SECRET, (err, user) => {\n    if (err) {\n      return res.status(403).json({ error: 'Недійсний токен' });\n    }\n    req.user = user;\n    next();\n  });\n}\n\n// Захищений маршрут\napp.get('/api/profile', authenticateToken, (req, res) => {\n  const user = users.find(u => u.id === req.user.userId);\n  if (!user) {\n    return res.status(404).json({ error: 'Користувач не знайдений' });\n  }\n  \n  res.json({\n    id: user.id,\n    email: user.email,\n    name: user.name,\n    createdAt: user.createdAt\n  });\n});\n\nconsole.log('Сервер аутентифікації готовий до роботи');",
+    "test": {
+      "questions": [
+        {
+          "question": "Що таке JWT?",
+          "options": [
+            "Java Web Token",
+            "JSON Web Token",
+            "JavaScript Web Tool",
+            "Java Web Tool"
+          ],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Навіщо потрібно хешувати паролі?",
+          "options": [
+            "Для швидкості",
+            "Для безпеки - щоб не зберігати паролі у відкритому вигляді",
+            "Для економії місця",
+            "Для красивого вигляду"
+          ],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Яка бібліотека використовується для хешування паролів?",
+          "options": ["crypto", "bcrypt", "hash", "password"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Що означає Rate Limiting?",
+          "options": [
+            "Обмеження швидкості інтернету",
+            "Обмеження кількості запитів за певний час",
+            "Обмеження розміру файлів",
+            "Обмеження кількості користувачів"
+          ],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Де зазвичай передається JWT токен?",
+          "options": [
+            "У URL параметрах",
+            "У заголовку Authorization",
+            "У cookies",
+            "У тілі запиту"
+          ],
+          "correctAnswer": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": 9,
+    "title": "Тестування в Node.js",
+    "description": "Unit тести, інтеграційні тести з Jest та Supertest",
+    "difficulty": "Складний",
+    "category": "practice",
+    "duration": "120 хв",
+    "content": "<p><strong>Тестування</strong> - невід'ємна частина розробки якісного програмного забезпечення. В Node.js екосистемі є багато інструментів для тестування.</p><p>Типи тестів:</p><ul><li><strong>Unit тести</strong> - тестування окремих функцій та модулів</li><li><strong>Інтеграційні тести</strong> - тестування взаємодії компонентів</li><li><strong>E2E тести</strong> - тестування всього додатку</li><li><strong>Mocking</strong> - імітація залежностей</li></ul><p>Jest - популярний фреймворк для тестування, Supertest - для тестування HTTP ендпоінтів.</p>",
+    "example": "// Приклад тестування з Jest та Supertest\nconst request = require('supertest');\nconst express = require('express');\n\n// Простий додаток для тестування\nconst app = express();\napp.use(express.json());\n\n// Функції для тестування\nfunction add(a, b) {\n  return a + b;\n}\n\nfunction multiply(a, b) {\n  return a * b;\n}\n\nfunction validateEmail(email) {\n  const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n  return emailRegex.test(email);\n}\n\n// API ендпоінти\napp.get('/api/health', (req, res) => {\n  res.json({ status: 'OK', timestamp: new Date().toISOString() });\n});\n\napp.post('/api/calculate', (req, res) => {\n  const { operation, a, b } = req.body;\n  \n  if (typeof a !== 'number' || typeof b !== 'number') {\n    return res.status(400).json({ error: 'Параметри повинні бути числами' });\n  }\n  \n  let result;\n  switch (operation) {\n    case 'add':\n      result = add(a, b);\n      break;\n    case 'multiply':\n      result = multiply(a, b);\n      break;\n    default:\n      return res.status(400).json({ error: 'Невідома операція' });\n  }\n  \n  res.json({ result });\n});\n\n// Unit тести\ndescribe('Математичні функції', () => {\n  test('додавання двох чисел', () => {\n    expect(add(2, 3)).toBe(5);\n    expect(add(-1, 1)).toBe(0);\n    expect(add(0, 0)).toBe(0);\n  });\n  \n  test('множення двох чисел', () => {\n    expect(multiply(3, 4)).toBe(12);\n    expect(multiply(-2, 3)).toBe(-6);\n    expect(multiply(0, 5)).toBe(0);\n  });\n});\n\ndescribe('Валідація email', () => {\n  test('правильні email адреси', () => {\n    expect(validateEmail('test@example.com')).toBe(true);\n    expect(validateEmail('user.name@domain.co.uk')).toBe(true);\n  });\n  \n  test('неправильні email адреси', () => {\n    expect(validateEmail('invalid-email')).toBe(false);\n    expect(validateEmail('@domain.com')).toBe(false);\n    expect(validateEmail('user@')).toBe(false);\n  });\n});\n\n// Інтеграційні тести API\ndescribe('API ендпоінти', () => {\n  test('GET /api/health повертає статус OK', async () => {\n    const response = await request(app)\n      .get('/api/health')\n      .expect(200);\n    \n    expect(response.body.status).toBe('OK');\n    expect(response.body.timestamp).toBeDefined();\n  });\n  \n  test('POST /api/calculate виконує додавання', async () => {\n    const response = await request(app)\n      .post('/api/calculate')\n      .send({ operation: 'add', a: 5, b: 3 })\n      .expect(200);\n    \n    expect(response.body.result).toBe(8);\n  });\n  \n  test('POST /api/calculate повертає помилку для невірних даних', async () => {\n    const response = await request(app)\n      .post('/api/calculate')\n      .send({ operation: 'add', a: 'not-a-number', b: 3 })\n      .expect(400);\n    \n    expect(response.body.error).toBe('Параметри повинні бути числами');\n  });\n});\n\n// Mock приклад\nconst mockDatabase = {\n  users: [\n    { id: 1, name: 'Іван', email: 'ivan@test.com' },\n    { id: 2, name: 'Марія', email: 'maria@test.com' }\n  ],\n  \n  findUserById: jest.fn((id) => {\n    return mockDatabase.users.find(user => user.id === id);\n  })\n};\n\ndescribe('Database mocking', () => {\n  test('пошук користувача за ID', () => {\n    const user = mockDatabase.findUserById(1);\n    expect(user).toEqual({ id: 1, name: 'Іван', email: 'ivan@test.com' });\n    expect(mockDatabase.findUserById).toHaveBeenCalledWith(1);\n  });\n});\n\nconsole.log('Тести готові до запуску: npm test');",
+    "test": {
+      "questions": [
+        {
+          "question": "Що таке Unit тест?",
+          "options": [
+            "Тест всього додатку",
+            "Тест окремої функції або модуля",
+            "Тест бази даних",
+            "Тест інтерфейсу користувача"
+          ],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Який фреймворк популярний для тестування в Node.js?",
+          "options": ["Mocha", "Jest", "Jasmine", "Всі перераховані"],
+          "correctAnswer": 3
+        },
+        {
+          "question": "Що таке Mocking?",
+          "options": [
+            "Тестування швидкості",
+            "Імітація залежностей або зовнішніх сервісів",
+            "Тестування безпеки",
+            "Тестування інтерфейсу"
+          ],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Для чого використовується Supertest?",
+          "options": [
+            "Тестування баз даних",
+            "Тестування HTTP ендпоінтів",
+            "Тестування файлової системи",
+            "Тестування алгоритмів"
+          ],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Яка команда зазвичай запускає тести в Node.js проекті?",
+          "options": ["npm start", "npm test", "npm run", "npm check"],
+          "correctAnswer": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": 10,
+    "title": "Деплой та продакшн",
+    "description": "Підготовка додатку до продакшну, деплой на Heroku, PM2, Docker",
+    "difficulty": "Складний",
+    "category": "practice",
+    "duration": "180 хв",
+    "content": "<p><strong>Деплой та продакшн</strong> - фінальний етап розробки, коли додаток стає доступним для користувачів. Важливо правильно налаштувати середовище продакшну.</p><p>Ключові аспекти продакшну:</p><ul><li><strong>Environment Variables</strong> - змінні оточення для конфігурації</li><li><strong>Process Management</strong> - управління процесами (PM2)</li><li><strong>Logging</strong> - логування для моніторингу</li><li><strong>Security</strong> - HTTPS, CORS, rate limiting</li><li><strong>Performance</strong> - кешування, оптимізація</li></ul><p>Популярні платформи: Heroku, Vercel, AWS, DigitalOcean, Railway.</p>",
+    "example": "// Підготовка додатку до продакшну\nconst express = require('express');\nconst helmet = require('helmet');\nconst cors = require('cors');\nconst compression = require('compression');\nconst rateLimit = require('express-rate-limit');\nconst winston = require('winston');\n\nconst app = express();\nconst PORT = process.env.PORT || 3000;\nconst NODE_ENV = process.env.NODE_ENV || 'development';\n\n// Налаштування логування\nconst logger = winston.createLogger({\n  level: 'info',\n  format: winston.format.combine(\n    winston.format.timestamp(),\n    winston.format.errors({ stack: true }),\n    winston.format.json()\n  ),\n  defaultMeta: { service: 'my-app' },\n  transports: [\n    new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),\n    new winston.transports.File({ filename: 'logs/combined.log' })\n  ]\n});\n\nif (NODE_ENV !== 'production') {\n  logger.add(new winston.transports.Console({\n    format: winston.format.simple()\n  }));\n}\n\n// Middleware для безпеки\napp.use(helmet()); // Встановлює різні HTTP заголовки\napp.use(compression()); // Стискання відповідей\n\n// CORS налаштування\nconst corsOptions = {\n  origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],\n  credentials: true,\n  optionsSuccessStatus: 200\n};\napp.use(cors(corsOptions));\n\n// Rate limiting\nconst limiter = rateLimit({\n  windowMs: 15 * 60 * 1000, // 15 хвилин\n  max: NODE_ENV === 'production' ? 100 : 1000, // обмеження запитів\n  message: 'Забагато запитів з цієї IP адреси'\n});\napp.use('/api/', limiter);\n\n// Парсинг JSON\napp.use(express.json({ limit: '10mb' }));\napp.use(express.urlencoded({ extended: true, limit: '10mb' }));\n\n// Middleware для логування запитів\napp.use((req, res, next) => {\n  logger.info(`${req.method} ${req.url}`, {\n    ip: req.ip,\n    userAgent: req.get('User-Agent')\n  });\n  next();\n});\n\n// Health check ендпоінт\napp.get('/health', (req, res) => {\n  res.json({\n    status: 'OK',\n    timestamp: new Date().toISOString(),\n    uptime: process.uptime(),\n    environment: NODE_ENV,\n    version: process.env.npm_package_version || '1.0.0'\n  });\n});\n\n// API маршрути\napp.get('/api/status', (req, res) => {\n  res.json({\n    message: 'API працює',\n    environment: NODE_ENV,\n    timestamp: new Date().toISOString()\n  });\n});\n\n// Статичні файли (для продакшну)\nif (NODE_ENV === 'production') {\n  app.use(express.static('public'));\n  \n  app.get('*', (req, res) => {\n    res.sendFile(path.join(__dirname, 'public', 'index.html'));\n  });\n}\n\n// Обробка помилок\napp.use((err, req, res, next) => {\n  logger.error('Помилка додатку:', {\n    error: err.message,\n    stack: err.stack,\n    url: req.url,\n    method: req.method,\n    ip: req.ip\n  });\n  \n  if (NODE_ENV === 'production') {\n    res.status(500).json({ error: 'Внутрішня помилка сервера' });\n  } else {\n    res.status(500).json({ error: err.message, stack: err.stack });\n  }\n});\n\n// 404 обробник\napp.use('*', (req, res) => {\n  res.status(404).json({ error: 'Ендпоінт не знайдено' });\n});\n\n// Graceful shutdown\nprocess.on('SIGTERM', () => {\n  logger.info('SIGTERM отримано, завершення роботи...');\n  server.close(() => {\n    logger.info('Процес завершено');\n    process.exit(0);\n  });\n});\n\nconst server = app.listen(PORT, () => {\n  logger.info(`Сервер запущено на порту ${PORT} в режимі ${NODE_ENV}`);\n});\n\n// Приклад package.json scripts для деплою\nconst deploymentScripts = {\n  \"scripts\": {\n    \"start\": \"node server.js\",\n    \"dev\": \"nodemon server.js\",\n    \"build\": \"npm run clean && npm run compile\",\n    \"clean\": \"rm -rf dist\",\n    \"compile\": \"babel src -d dist\",\n    \"test\": \"jest\",\n    \"test:coverage\": \"jest --coverage\",\n    \"lint\": \"eslint src/\",\n    \"lint:fix\": \"eslint src/ --fix\",\n    \"deploy:heroku\": \"git push heroku main\",\n    \"logs:heroku\": \"heroku logs --tail\"\n  },\n  \"engines\": {\n    \"node\": \">=14.0.0\",\n    \"npm\": \">=6.0.0\"\n  }\n};\n\n// PM2 ecosystem файл (ecosystem.config.js)\nconst pm2Config = {\n  apps: [{\n    name: 'my-app',\n    script: './server.js',\n    instances: 'max',\n    exec_mode: 'cluster',\n    env: {\n      NODE_ENV: 'development',\n      PORT: 3000\n    },\n    env_production: {\n      NODE_ENV: 'production',\n      PORT: 8000\n    },\n    log_file: './logs/combined.log',\n    error_file: './logs/error.log',\n    out_file: './logs/out.log',\n    max_memory_restart: '1G'\n  }]\n};\n\nconsole.log('Додаток готовий до деплою!');\nconsole.log('Команди для деплою:');\nconsole.log('- Heroku: git push heroku main');\nconsole.log('- PM2: pm2 start ecosystem.config.js --env production');\nconsole.log('- Docker: docker build -t my-app . && docker run -p 3000:3000 my-app');",
+    "test": {
+      "questions": [
+        {
+          "question": "Що таке Environment Variables?",
+          "options": [
+            "Змінні в коді",
+            "Змінні оточення для конфігурації додатку",
+            "Змінні бази даних",
+            "Змінні браузера"
+          ],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Для чого використовується PM2?",
+          "options": [
+            "Тестування додатків",
+            "Управління процесами Node.js в продакшні",
+            "Розробка інтерфейсу",
+            "Робота з базами даних"
+          ],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Що робить middleware helmet()?",
+          "options": [
+            "Стискає файли",
+            "Встановлює HTTP заголовки для безпеки",
+            "Логує запити",
+            "Кешує дані"
+          ],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Яка змінна оточення зазвичай визначає режим роботи додатку?",
+          "options": ["APP_MODE", "NODE_ENV", "ENVIRONMENT", "MODE"],
+          "correctAnswer": 1
+        },
+        {
+          "question": "Що означає Graceful Shutdown?",
+          "options": [
+            "Швидке завершення процесу",
+            "Коректне завершення з очищенням ресурсів",
+            "Перезапуск сервера",
+            "Видалення файлів"
+          ],
+          "correctAnswer": 1
+        }
+      ]
+    }
+  }
+]
