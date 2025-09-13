@@ -1,46 +1,54 @@
 // Import AOS library
 const AOS = window.AOS
 
-document.addEventListener("DOMContentLoaded", () => {
-    // Initialize AOS (Animate On Scroll)
-    AOS.init({
-        duration: 800,
-        easing: "ease",
-        once: false,
-        mirror: false,
-    })
+document.addEventListener("DOMContentLoaded", async () => {
+  console.log("DOM loaded, initializing course...")
 
-    // Initialize Three.js for hero particles
-    initParticles()
+  // Load lessons first
+  await loadLessons()
 
-    // Setup custom cursor
-    setupCustomCursor()
+  // Then load user progress
+  await loadUserProgress()
 
-    // Setup navigation
-    setupNavigation()
+  // Initialize AOS (Animate On Scroll)
+  AOS.init({
+    duration: 800,
+    easing: "ease",
+    once: false,
+    mirror: false,
+  })
 
-    // Setup scroll effects
-    setupScrollEffects()
+  // Initialize Three.js for hero particles
+  initParticles()
 
-    // Fetch lessons
-    fetchLessons()
+  // Setup custom cursor
+  setupCustomCursor()
 
-    // Setup event listeners
-    setupEventListeners()
+  // Setup navigation
+  setupNavigation()
 
-    // Setup contact form
-    setupContactForm()
+  // Setup scroll effects
+  setupScrollEffects()
 
-    // Setup stats counter
-    setupStatsCounter()
+  // Fetch lessons
+  fetchLessons()
 
-    // Setup lesson filter
-    setupLessonFilter()
+  // Setup event listeners
+  setupEventListeners()
 
-    // Setup test navigation
-    setupTestNavigation()
+  // Setup contact form
+  setupContactForm()
 
-    checkAuthStatus()
+  // Setup stats counter
+  setupStatsCounter()
+
+  // Setup lesson filter
+  setupLessonFilter()
+
+  // Setup test navigation
+  setupTestNavigation()
+
+  checkAuthStatus()
 })
 
 let lessons = []
@@ -51,190 +59,187 @@ let userAnswers = []
 
 // Custom Cursor
 function setupCustomCursor() {
-    const cursorGlow = document.querySelector(".cursor-glow")
-    const cursorDot = document.querySelector(".cursor-dot")
+  const cursorGlow = document.querySelector(".cursor-glow")
+  const cursorDot = document.querySelector(".cursor-dot")
 
-    document.addEventListener("mousemove", (e) => {
-        cursorGlow.style.left = e.clientX + "px"
-        cursorGlow.style.top = e.clientY + "px"
+  document.addEventListener("mousemove", (e) => {
+    cursorGlow.style.left = e.clientX + "px"
+    cursorGlow.style.top = e.clientY + "px"
 
-        cursorDot.style.left = e.clientX + "px"
-        cursorDot.style.top = e.clientY + "px"
+    cursorDot.style.left = e.clientX + "px"
+    cursorDot.style.top = e.clientY + "px"
+  })
+
+  // Change cursor size on clickable elements
+  const clickables = document.querySelectorAll("a, button, .lesson-card, .project-card, .close")
+
+  clickables.forEach((element) => {
+    element.addEventListener("mouseenter", () => {
+      cursorGlow.style.width = "50px"
+      cursorGlow.style.height = "50px"
+      cursorGlow.style.background = "radial-gradient(circle, rgba(104, 211, 145, 0.8) 0%, rgba(104, 211, 145, 0) 70%)"
+      cursorDot.style.backgroundColor = "var(--secondary-color)"
     })
 
-    // Change cursor size on clickable elements
-    const clickables = document.querySelectorAll("a, button, .lesson-card, .project-card, .close")
-
-    clickables.forEach((element) => {
-        element.addEventListener("mouseenter", () => {
-            cursorGlow.style.width = "50px"
-            cursorGlow.style.height = "50px"
-            cursorGlow.style.background = "radial-gradient(circle, rgba(104, 211, 145, 0.8) 0%, rgba(104, 211, 145, 0) 70%)"
-            cursorDot.style.backgroundColor = "var(--secondary-color)"
-        })
-
-        element.addEventListener("mouseleave", () => {
-            cursorGlow.style.width = "30px"
-            cursorGlow.style.height = "30px"
-            cursorGlow.style.background = "radial-gradient(circle, rgba(104, 211, 145, 0.5) 0%, rgba(104, 211, 145, 0) 70%)"
-            cursorDot.style.backgroundColor = "var(--primary-color)"
-        })
+    element.addEventListener("mouseleave", () => {
+      cursorGlow.style.width = "30px"
+      cursorGlow.style.height = "30px"
+      cursorGlow.style.background = "radial-gradient(circle, rgba(104, 211, 145, 0.5) 0%, rgba(104, 211, 145, 0) 70%)"
+      cursorDot.style.backgroundColor = "var(--primary-color)"
     })
+  })
 }
 
 // Navigation
 function setupNavigation() {
-    const menuToggle = document.querySelector(".menu-toggle")
-    const navLinks = document.querySelector(".nav-links")
+  const menuToggle = document.querySelector(".menu-toggle")
+  const navLinks = document.querySelector(".nav-links")
 
-    menuToggle.addEventListener("click", () => {
-        menuToggle.classList.toggle("active")
-        navLinks.classList.toggle("active")
-    })
+  menuToggle.addEventListener("click", () => {
+    menuToggle.classList.toggle("active")
+    navLinks.classList.toggle("active")
+  })
 
-    // Close menu when clicking on a link
-    document.querySelectorAll(".nav-links a").forEach((link) => {
-        link.addEventListener("click", () => {
-            menuToggle.classList.remove("active")
-            navLinks.classList.remove("active")
-        })
+  // Close menu when clicking on a link
+  document.querySelectorAll(".nav-links a").forEach((link) => {
+    link.addEventListener("click", () => {
+      menuToggle.classList.remove("active")
+      navLinks.classList.remove("active")
     })
+  })
 }
 
 // Scroll Effects
 function setupScrollEffects() {
-    const header = document.querySelector("header")
-    const backToTop = document.querySelector(".back-to-top")
+  const header = document.querySelector("header")
+  const backToTop = document.querySelector(".back-to-top")
 
-    window.addEventListener("scroll", () => {
-        // Header effect
-        if (window.scrollY > 100) {
-            header.classList.add("scrolled")
-        } else {
-            header.classList.remove("scrolled")
-        }
+  window.addEventListener("scroll", () => {
+    // Header effect
+    if (window.scrollY > 100) {
+      header.classList.add("scrolled")
+    } else {
+      header.classList.remove("scrolled")
+    }
 
-        // Back to top button
-        if (window.scrollY > 500) {
-            backToTop.classList.add("visible")
-        } else {
-            backToTop.classList.remove("visible")
-        }
-    })
+    // Back to top button
+    if (window.scrollY > 500) {
+      backToTop.classList.add("visible")
+    } else {
+      backToTop.classList.remove("visible")
+    }
+  })
 
-    // Smooth scroll for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-        anchor.addEventListener("click", function (e) {
-            e.preventDefault()
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener("click", function (e) {
+      e.preventDefault()
 
-            const targetId = this.getAttribute("href")
-            if (targetId === "#") return
+      const targetId = this.getAttribute("href")
+      if (targetId === "#") return
 
-            const targetElement = document.querySelector(targetId)
-            if (targetElement) {
-                targetElement.scrollIntoView({
-                    behavior: "smooth",
-                })
-            }
+      const targetElement = document.querySelector(targetId)
+      if (targetElement) {
+        targetElement.scrollIntoView({
+          behavior: "smooth",
         })
+      }
     })
+  })
 }
 
 // Three.js Particles
 function initParticles() {
-    const particlesContainer = document.querySelector(".hero-particles")
-    if (!particlesContainer) return
+  const particlesContainer = document.querySelector(".hero-particles")
+  if (!particlesContainer) return
 
-    // Import Three.js library
-    const THREE = window.THREE
+  // Import Three.js library
+  const THREE = window.THREE
 
-    const scene = new THREE.Scene()
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+  const scene = new THREE.Scene()
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
 
-    const renderer = new THREE.WebGLRenderer({
-        alpha: true,
-        antialias: true
-    })
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true })
+  renderer.setSize(window.innerWidth, window.innerHeight)
+  renderer.setPixelRatio(window.devicePixelRatio)
+  particlesContainer.appendChild(renderer.domElement)
+
+  // Create particles
+  const particlesGeometry = new THREE.BufferGeometry()
+  const particlesCount = 2000
+
+  const posArray = new Float32Array(particlesCount * 3)
+  const colorsArray = new Float32Array(particlesCount * 3)
+
+  for (let i = 0; i < particlesCount * 3; i++) {
+    // Position
+    posArray[i] = (Math.random() - 0.5) * 10
+
+    // Colors (green to magenta gradient)
+    if (i % 3 === 0) {
+      // R
+      colorsArray[i] = Math.random() * 0.5
+    } else if (i % 3 === 1) {
+      // G
+      colorsArray[i] = Math.random() * 0.5 + 0.5
+    } else {
+      // B
+      colorsArray[i] = Math.random() * 0.5
+    }
+  }
+
+  particlesGeometry.setAttribute("position", new THREE.BufferAttribute(posArray, 3))
+  particlesGeometry.setAttribute("color", new THREE.BufferAttribute(colorsArray, 3))
+
+  const particlesMaterial = new THREE.PointsMaterial({
+    size: 0.01,
+    vertexColors: true,
+    transparent: true,
+    sizeAttenuation: true,
+  })
+
+  const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial)
+  scene.add(particlesMesh)
+
+  camera.position.z = 3
+
+  // Animation
+  function animate() {
+    requestAnimationFrame(animate)
+
+    particlesMesh.rotation.x += 0.0005
+    particlesMesh.rotation.y += 0.0005
+
+    renderer.render(scene, camera)
+  }
+
+  animate()
+
+  // Resize handler
+  window.addEventListener("resize", () => {
+    camera.aspect = window.innerWidth / window.innerHeight
+    camera.updateProjectionMatrix()
     renderer.setSize(window.innerWidth, window.innerHeight)
-    renderer.setPixelRatio(window.devicePixelRatio)
-    particlesContainer.appendChild(renderer.domElement)
-
-    // Create particles
-    const particlesGeometry = new THREE.BufferGeometry()
-    const particlesCount = 2000
-
-    const posArray = new Float32Array(particlesCount * 3)
-    const colorsArray = new Float32Array(particlesCount * 3)
-
-    for (let i = 0; i < particlesCount * 3; i++) {
-        // Position
-        posArray[i] = (Math.random() - 0.5) * 10
-
-        // Colors (green to magenta gradient)
-        if (i % 3 === 0) {
-            // R
-            colorsArray[i] = Math.random() * 0.5
-        } else if (i % 3 === 1) {
-            // G
-            colorsArray[i] = Math.random() * 0.5 + 0.5
-        } else {
-            // B
-            colorsArray[i] = Math.random() * 0.5
-        }
-    }
-
-    particlesGeometry.setAttribute("position", new THREE.BufferAttribute(posArray, 3))
-    particlesGeometry.setAttribute("color", new THREE.BufferAttribute(colorsArray, 3))
-
-    const particlesMaterial = new THREE.PointsMaterial({
-        size: 0.01,
-        vertexColors: true,
-        transparent: true,
-        sizeAttenuation: true,
-    })
-
-    const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial)
-    scene.add(particlesMesh)
-
-    camera.position.z = 3
-
-    // Animation
-    function animate() {
-        requestAnimationFrame(animate)
-
-        particlesMesh.rotation.x += 0.0005
-        particlesMesh.rotation.y += 0.0005
-
-        renderer.render(scene, camera)
-    }
-
-    animate()
-
-    // Resize handler
-    window.addEventListener("resize", () => {
-        camera.aspect = window.innerWidth / window.innerHeight
-        camera.updateProjectionMatrix()
-        renderer.setSize(window.innerWidth, window.innerHeight)
-    })
+  })
 }
 
 // Fetch Lessons
 async function fetchLessons() {
-    try {
-        const response = await fetch("lessons.json")
-        lessons = await response.json()
-        displayLessons(lessons)
-    } catch (error) {
-        showToast("Помилка завантаження уроків", "error")
-    }
+  try {
+    const response = await fetch("lessons.json")
+    lessons = await response.json()
+    displayLessons(lessons)
+  } catch (error) {
+    showToast("Помилка завантаження уроків", "error")
+  }
 }
 
 function displayLessons(lessons) {
-    const container = document.getElementById("lessons-container")
-    container.innerHTML = lessons
-        .map(
-            (lesson) => `
-          <div class="lesson-card" data-category="${lesson.category}">
+  const container = document.getElementById("lessons-container")
+  container.innerHTML = lessons
+    .map(
+      (lesson) => `
+          <div class="lesson-card" data-lesson-id="${lesson.id}" data-category="${lesson.category}">
               <div class="lesson-icon">
                   <i class="${getLessonIcon(lesson.title)}"></i>
               </div>
@@ -250,388 +255,384 @@ function displayLessons(lessons) {
               </button>
           </div>
       `,
-        )
-        .join("")
+    )
+    .join("")
 
-    document.querySelectorAll(".lesson-button").forEach((button) => {
-        button.addEventListener("click", () => showLesson(button.dataset.id))
-    })
+  document.querySelectorAll(".lesson-button").forEach((button) => {
+    button.addEventListener("click", () => showLesson(button.dataset.id))
+  })
 }
 
 function getLessonCategory(title) {
-    if (title.includes("Основи") || title.includes("встановлення") || title.includes("Модулі") || title.includes("NPM"))
-        return "basics"
-    if (
-        title.includes("Express") ||
-        title.includes("MongoDB") ||
-        title.includes("Асинхронне") ||
-        title.includes("Аутентифікація")
-    )
-        return "advanced"
-    if (title.includes("Тестування") || title.includes("Деплой")) return "practice"
+  if (title.includes("Основи") || title.includes("встановлення") || title.includes("Модулі") || title.includes("NPM"))
     return "basics"
+  if (
+    title.includes("Express") ||
+    title.includes("MongoDB") ||
+    title.includes("Асинхронне") ||
+    title.includes("Аутентифікація")
+  )
+    return "advanced"
+  if (title.includes("Тестування") || title.includes("Деплой")) return "practice"
+  return "basics"
 }
 
 function getLessonIcon(title) {
-    if (title.includes("Основи")) return "fas fa-play-circle"
-    if (title.includes("Модулі")) return "fas fa-cube"
-    if (title.includes("HTTP")) return "fas fa-server"
-    if (title.includes("Асинхронне")) return "fas fa-sync-alt"
-    if (title.includes("NPM")) return "fas fa-box"
-    if (title.includes("Express")) return "fas fa-rocket"
-    if (title.includes("MongoDB") || title.includes("базами даних")) return "fas fa-database"
-    if (title.includes("Аутентифікація") || title.includes("безпека")) return "fas fa-shield-alt"
-    if (title.includes("Тестування")) return "fas fa-vial"
-    if (title.includes("Деплой") || title.includes("продакшн")) return "fas fa-cloud"
-    return "fas fa-code"
+  if (title.includes("Основи")) return "fas fa-play-circle"
+  if (title.includes("Модулі")) return "fas fa-cube"
+  if (title.includes("HTTP")) return "fas fa-server"
+  if (title.includes("Асинхронне")) return "fas fa-sync-alt"
+  if (title.includes("NPM")) return "fas fa-box"
+  if (title.includes("Express")) return "fas fa-rocket"
+  if (title.includes("MongoDB") || title.includes("базами даних")) return "fas fa-database"
+  if (title.includes("Аутентифікація") || title.includes("безпека")) return "fas fa-shield-alt"
+  if (title.includes("Тестування")) return "fas fa-vial"
+  if (title.includes("Деплой") || title.includes("продакшн")) return "fas fa-cloud"
+  return "fas fa-code"
 }
 
 function showLesson(id) {
-    currentLesson = lessons.find((l) => l.id === Number.parseInt(id))
-    if (currentLesson) {
-        const modal = document.getElementById("lesson-modal")
-        document.getElementById("modal-title").textContent = currentLesson.title
-        document.getElementById("modal-difficulty").textContent = currentLesson.difficulty
-        document.getElementById("modal-duration").textContent = currentLesson.duration
-        document.getElementById("modal-content").innerHTML = currentLesson.content
+  currentLesson = lessons.find((l) => l.id === Number.parseInt(id))
+  if (currentLesson) {
+    const modal = document.getElementById("lesson-modal")
+    document.getElementById("modal-title").textContent = currentLesson.title
+    document.getElementById("modal-difficulty").textContent = currentLesson.difficulty
+    document.getElementById("modal-duration").textContent = currentLesson.duration
+    document.getElementById("modal-content").innerHTML = currentLesson.content
 
-        document.getElementById("code-example").textContent = currentLesson.example
-        document.getElementById("code-output").textContent = ""
-        modal.style.display = "block"
-        document.body.style.overflow = "hidden"
-    }
+    document.getElementById("code-example").textContent = currentLesson.example
+    document.getElementById("code-output").textContent = ""
+    modal.style.display = "block"
+    document.body.style.overflow = "hidden"
+  }
 }
 
 function executeCode() {
-    const code = document.getElementById("code-example").textContent
-    const outputElement = document.getElementById("code-output")
+  const code = document.getElementById("code-example").textContent
+  const outputElement = document.getElementById("code-output")
 
-    try {
-        const safeRequire = (module) => {
-            if (module === "fs") {
-                return {
-                    readFileSync: (path, encoding) => {
-                        if (path === "package.json") {
-                            return JSON.stringify({
-                                    name: "my-node-app",
-                                    version: "1.0.0",
-                                    description: "Мій Node.js додаток",
-                                    main: "index.js",
-                                    scripts: {
-                                        start: "node index.js",
-                                        dev: "nodemon index.js",
-                                    },
-                                },
-                                null,
-                                2,
-                            )
-                        }
-                        throw new Error("Файл не знайдено")
-                    },
-                    readFile: (path, encoding, callback) => {
-                        setTimeout(() => {
-                            if (path === "package.json") {
-                                callback(
-                                    null,
-                                    JSON.stringify({
-                                            name: "my-node-app",
-                                            version: "1.0.0",
-                                        },
-                                        null,
-                                        2,
-                                    ),
-                                )
-                            } else {
-                                callback(new Error("Файл не знайдено"))
-                            }
-                        }, 100)
-                    },
-                }
+  try {
+    const safeRequire = (module) => {
+      if (module === "fs") {
+        return {
+          readFileSync: (path, encoding) => {
+            if (path === "package.json") {
+              return JSON.stringify(
+                {
+                  name: "my-node-app",
+                  version: "1.0.0",
+                  description: "Мій Node.js додаток",
+                  main: "index.js",
+                  scripts: {
+                    start: "node index.js",
+                    dev: "nodemon index.js",
+                  },
+                },
+                null,
+                2,
+              )
             }
-            if (module === "path") {
-                return {
-                    join: (...paths) => paths.join("/"),
-                    extname: (path) => path.split(".").pop() || "",
-                }
-            }
-            if (module === "http") {
-                return {
-                    createServer: (callback) => ({
-                        listen: (port, cb) => {
-                            setTimeout(() => {
-                                cb && cb()
-                            }, 100)
-                        },
-                    }),
-                }
-            }
-            if (module === "express") {
-                const mockApp = {
-                    use: (middleware) => console.log("Middleware додано"),
-                    get: (path, handler) => console.log(`GET маршрут: ${path}`),
-                    post: (path, handler) => console.log(`POST маршрут: ${path}`),
-                    listen: (port, cb) => {
-                        setTimeout(() => {
-                            cb && cb()
-                        }, 100)
-                    },
-                }
-                return () => mockApp
-            }
-            if (module === "mongoose") {
-                return {
-                    connect: (url) => console.log("Підключено до MongoDB"),
-                    Schema: function (definition) {
-                        this.definition = definition
-                        this.pre = () => {}
-                        this.methods = {}
-                    },
-                    model: (name, schema) => {
-                        return {
-                            find: () => Promise.resolve([]),
-                            save: () => Promise.resolve({}),
-                            findById: () => Promise.resolve({}),
-                            findByIdAndUpdate: () => Promise.resolve({}),
-                            findByIdAndDelete: () => Promise.resolve({}),
-                        }
-                    },
-                }
-            }
-            if (module === "bcrypt") {
-                return {
-                    hash: (password, rounds) => Promise.resolve("hashed_password"),
-                    compare: (password, hash) => Promise.resolve(true),
-                }
-            }
-            if (module === "jsonwebtoken") {
-                return {
-                    sign: (payload, secret, options) => "jwt_token",
-                    verify: (token, secret, callback) => callback(null, {
-                        userId: 1
-                    }),
-                }
-            }
-            throw new Error(`Module ${module} is not supported in this environment.`)
-        }
-
-        const capturedOutput = []
-        const safeConsole = {
-            log: (...args) => capturedOutput.push(args.join(" ")),
-            error: (...args) => capturedOutput.push("Error: " + args.join(" ")),
-            warn: (...args) => capturedOutput.push("Warning: " + args.join(" ")),
-        }
-
-        // Mock global objects for Node.js examples
-        const mockProcess = {
-            version: "v18.17.0",
-            platform: "linux",
-            cwd: () => "/home/user/project",
-            argv: ["node", "script.js", "--example"],
-        }
-
-        const mockGlobals = {
-            __dirname: "/home/user/project",
-            __filename: "/home/user/project/script.js",
-            setTimeout: setTimeout,
-            process: mockProcess,
-            Buffer: {
-                from: (str) => ({
-                    toString: () => str
-                }),
-            },
-        }
-
-        // Create function with safe environment
-        const runUserCode = new Function(
-            "console",
-            "require",
-            "process",
-            "__dirname",
-            "__filename",
-            "setTimeout",
-            "Buffer",
-            code,
-        )
-
-        // Execute code with mocked environment
-        runUserCode(
-            safeConsole,
-            safeRequire,
-            mockGlobals.process,
-            mockGlobals.__dirname,
-            mockGlobals.__filename,
-            mockGlobals.setTimeout,
-            mockGlobals.Buffer,
-        )
-
-        // Show captured output after a delay to simulate async operations
-        setTimeout(() => {
-            outputElement.textContent = capturedOutput.join("\n") || "Код виконано успішно (без виводу)"
-
-            outputElement.classList.add("fade-in")
+            throw new Error("Файл не знайдено")
+          },
+          readFile: (path, encoding, callback) => {
             setTimeout(() => {
-                outputElement.classList.remove("fade-in")
-            }, 1000)
-        }, 200)
-
-        showToast("Код успішно виконано!", "success")
-    } catch (error) {
-        outputElement.textContent = `Error: ${error.message}`
-        showToast("Помилка виконання коду", "error")
+              if (path === "package.json") {
+                callback(
+                  null,
+                  JSON.stringify(
+                    {
+                      name: "my-node-app",
+                      version: "1.0.0",
+                    },
+                    null,
+                    2,
+                  ),
+                )
+              } else {
+                callback(new Error("Файл не знайдено"))
+              }
+            }, 100)
+          },
+        }
+      }
+      if (module === "path") {
+        return {
+          join: (...paths) => paths.join("/"),
+          extname: (path) => path.split(".").pop() || "",
+        }
+      }
+      if (module === "http") {
+        return {
+          createServer: (callback) => ({
+            listen: (port, cb) => {
+              setTimeout(() => {
+                cb && cb()
+              }, 100)
+            },
+          }),
+        }
+      }
+      if (module === "express") {
+        const mockApp = {
+          use: (middleware) => console.log("Middleware додано"),
+          get: (path, handler) => console.log(`GET маршрут: ${path}`),
+          post: (path, handler) => console.log(`POST маршрут: ${path}`),
+          listen: (port, cb) => {
+            setTimeout(() => {
+              cb && cb()
+            }, 100)
+          },
+        }
+        return () => mockApp
+      }
+      if (module === "mongoose") {
+        return {
+          connect: (url) => console.log("Підключено до MongoDB"),
+          Schema: function (definition) {
+            this.definition = definition
+            this.pre = () => {}
+            this.methods = {}
+          },
+          model: (name, schema) => {
+            return {
+              find: () => Promise.resolve([]),
+              save: () => Promise.resolve({}),
+              findById: () => Promise.resolve({}),
+              findByIdAndUpdate: () => Promise.resolve({}),
+              findByIdAndDelete: () => Promise.resolve({}),
+            }
+          },
+        }
+      }
+      if (module === "bcrypt") {
+        return {
+          hash: (password, rounds) => Promise.resolve("hashed_password"),
+          compare: (password, hash) => Promise.resolve(true),
+        }
+      }
+      if (module === "jsonwebtoken") {
+        return {
+          sign: (payload, secret, options) => "jwt_token",
+          verify: (token, secret, callback) => callback(null, { userId: 1 }),
+        }
+      }
+      throw new Error(`Module ${module} is not supported in this environment.`)
     }
+
+    const capturedOutput = []
+    const safeConsole = {
+      log: (...args) => capturedOutput.push(args.join(" ")),
+      error: (...args) => capturedOutput.push("Error: " + args.join(" ")),
+      warn: (...args) => capturedOutput.push("Warning: " + args.join(" ")),
+    }
+
+    // Mock global objects for Node.js examples
+    const mockProcess = {
+      version: "v18.17.0",
+      platform: "linux",
+      cwd: () => "/home/user/project",
+      argv: ["node", "script.js", "--example"],
+    }
+
+    const mockGlobals = {
+      __dirname: "/home/user/project",
+      __filename: "/home/user/project/script.js",
+      setTimeout: setTimeout,
+      process: mockProcess,
+      Buffer: {
+        from: (str) => ({ toString: () => str }),
+      },
+    }
+
+    // Create function with safe environment
+    const runUserCode = new Function(
+      "console",
+      "require",
+      "process",
+      "__dirname",
+      "__filename",
+      "setTimeout",
+      "Buffer",
+      code,
+    )
+
+    // Execute code with mocked environment
+    runUserCode(
+      safeConsole,
+      safeRequire,
+      mockGlobals.process,
+      mockGlobals.__dirname,
+      mockGlobals.__filename,
+      mockGlobals.setTimeout,
+      mockGlobals.Buffer,
+    )
+
+    // Show captured output after a delay to simulate async operations
+    setTimeout(() => {
+      outputElement.textContent = capturedOutput.join("\n") || "Код виконано успішно (без виводу)"
+
+      outputElement.classList.add("fade-in")
+      setTimeout(() => {
+        outputElement.classList.remove("fade-in")
+      }, 1000)
+    }, 200)
+
+    showToast("Код успішно виконано!", "success")
+  } catch (error) {
+    outputElement.textContent = `Error: ${error.message}`
+    showToast("Помилка виконання коду", "error")
+  }
 }
 
 function setupEventListeners() {
-    const lessonModal = document.getElementById("lesson-modal")
-    const testModal = document.getElementById("test-modal")
-    const resultModal = document.getElementById("result-modal")
-    const closeBtns = document.querySelectorAll(".close")
-    const startTestBtn = document.getElementById("start-test")
-    const submitTestBtn = document.getElementById("submit-test")
-    const retryTestBtn = document.getElementById("retry-test")
-    const runCodeBtn = document.getElementById("run-code")
-    const copyCodeBtn = document.querySelector(".copy-code-btn")
-    const continueBtn = document.getElementById("continue-learning")
-    const logoutBtn = document.getElementById("logout-btn")
+  const lessonModal = document.getElementById("lesson-modal")
+  const testModal = document.getElementById("test-modal")
+  const resultModal = document.getElementById("result-modal")
+  const closeBtns = document.querySelectorAll(".close")
+  const startTestBtn = document.getElementById("start-test")
+  const submitTestBtn = document.getElementById("submit-test")
+  const retryTestBtn = document.getElementById("retry-test")
+  const runCodeBtn = document.getElementById("run-code")
+  const copyCodeBtn = document.querySelector(".copy-code-btn")
+  const continueBtn = document.getElementById("continue-learning")
+  const logoutBtn = document.getElementById("logout-btn")
 
-    document.getElementById("start-journey").addEventListener("click", () => {
-        document.getElementById("lessons").scrollIntoView({
-            behavior: "smooth"
-        })
+  document.getElementById("start-journey").addEventListener("click", () => {
+    document.getElementById("lessons").scrollIntoView({ behavior: "smooth" })
+  })
+
+  closeBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      lessonModal.style.display = "none"
+      testModal.style.display = "none"
+      resultModal.style.display = "none"
+      document.body.style.overflow = ""
     })
+  })
 
-    closeBtns.forEach((btn) => {
-        btn.addEventListener("click", () => {
-            lessonModal.style.display = "none"
-            testModal.style.display = "none"
-            resultModal.style.display = "none"
-            document.body.style.overflow = ""
-        })
+  window.addEventListener("click", (e) => {
+    if (e.target === lessonModal || e.target === testModal || e.target === resultModal) {
+      lessonModal.style.display = "none"
+      testModal.style.display = "none"
+      resultModal.style.display = "none"
+      document.body.style.overflow = ""
+    }
+  })
+
+  startTestBtn.addEventListener("click", startTest)
+  submitTestBtn.addEventListener("click", submitTest)
+  retryTestBtn.addEventListener("click", retryTest)
+  runCodeBtn.addEventListener("click", executeCode)
+
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", logout)
+  }
+
+  if (copyCodeBtn) {
+    copyCodeBtn.addEventListener("click", () => {
+      const codeText = document.getElementById("code-example").textContent
+      navigator.clipboard.writeText(codeText).then(() => {
+        showToast("Код скопійовано в буфер обміну!", "success")
+      })
     })
+  }
 
-    window.addEventListener("click", (e) => {
-        if (e.target === lessonModal || e.target === testModal || e.target === resultModal) {
-            lessonModal.style.display = "none"
-            testModal.style.display = "none"
-            resultModal.style.display = "none"
-            document.body.style.overflow = ""
-        }
+  if (continueBtn) {
+    continueBtn.addEventListener("click", () => {
+      resultModal.style.display = "none"
+      document.body.style.overflow = ""
     })
-
-    startTestBtn.addEventListener("click", startTest)
-    submitTestBtn.addEventListener("click", submitTest)
-    retryTestBtn.addEventListener("click", retryTest)
-    runCodeBtn.addEventListener("click", executeCode)
-
-    if (logoutBtn) {
-        logoutBtn.addEventListener("click", logout)
-    }
-
-    if (copyCodeBtn) {
-        copyCodeBtn.addEventListener("click", () => {
-            const codeText = document.getElementById("code-example").textContent
-            navigator.clipboard.writeText(codeText).then(() => {
-                showToast("Код скопійовано в буфер обміну!", "success")
-            })
-        })
-    }
-
-    if (continueBtn) {
-        continueBtn.addEventListener("click", () => {
-            resultModal.style.display = "none"
-            document.body.style.overflow = ""
-        })
-    }
+  }
 }
 
 function setupTestNavigation() {
-    const prevBtn = document.getElementById("prev-question")
-    const nextBtn = document.getElementById("next-question")
-    const submitBtn = document.getElementById("submit-test")
+  const prevBtn = document.getElementById("prev-question")
+  const nextBtn = document.getElementById("next-question")
+  const submitBtn = document.getElementById("submit-test")
 
-    if (!prevBtn || !nextBtn || !submitBtn) return
+  if (!prevBtn || !nextBtn || !submitBtn) return
 
-    prevBtn.addEventListener("click", () => {
-        if (currentQuestionIndex > 0) {
-            saveCurrentAnswer()
-            currentQuestionIndex--
-            showCurrentQuestion()
-        }
-    })
+  prevBtn.addEventListener("click", () => {
+    if (currentQuestionIndex > 0) {
+      saveCurrentAnswer()
+      currentQuestionIndex--
+      showCurrentQuestion()
+    }
+  })
 
-    nextBtn.addEventListener("click", () => {
-        saveCurrentAnswer()
-        currentQuestionIndex++
+  nextBtn.addEventListener("click", () => {
+    saveCurrentAnswer()
+    currentQuestionIndex++
 
-        if (currentQuestionIndex >= currentTest.questions.length) {
-            currentQuestionIndex = currentTest.questions.length - 1
-            nextBtn.style.display = "none"
-            submitBtn.style.display = "inline-flex"
-        } else {
-            showCurrentQuestion()
-        }
-    })
+    if (currentQuestionIndex >= currentTest.questions.length) {
+      currentQuestionIndex = currentTest.questions.length - 1
+      nextBtn.style.display = "none"
+      submitBtn.style.display = "inline-flex"
+    } else {
+      showCurrentQuestion()
+    }
+  })
 }
 
 function saveCurrentAnswer() {
-    if (!currentTest) return
+  if (!currentTest) return
 
-    const selected = document.querySelector(`input[name="current-question"]:checked`)
-    if (selected) {
-        userAnswers[currentQuestionIndex] = Number.parseInt(selected.value)
-    } else {
-        userAnswers[currentQuestionIndex] = -1
-    }
+  const selected = document.querySelector(`input[name="current-question"]:checked`)
+  if (selected) {
+    userAnswers[currentQuestionIndex] = Number.parseInt(selected.value)
+  } else {
+    userAnswers[currentQuestionIndex] = -1
+  }
 }
 
 function startTest() {
-    if (currentLesson && currentLesson.test) {
-        currentTest = JSON.parse(JSON.stringify(currentLesson.test))
-        shuffleArray(currentTest.questions)
-        currentTest.questions.forEach((question) => shuffleArray(question.options))
+  if (currentLesson && currentLesson.test) {
+    currentTest = JSON.parse(JSON.stringify(currentLesson.test))
+    shuffleArray(currentTest.questions)
+    currentTest.questions.forEach((question) => shuffleArray(question.options))
 
-        // Reset test state
-        currentQuestionIndex = 0
-        userAnswers = new Array(currentTest.questions.length).fill(-1)
+    // Reset test state
+    currentQuestionIndex = 0
+    userAnswers = new Array(currentTest.questions.length).fill(-1)
 
-        // Update total questions count
-        document.getElementById("total-questions").textContent = currentTest.questions.length
+    // Update total questions count
+    document.getElementById("total-questions").textContent = currentTest.questions.length
 
-        showCurrentQuestion()
-        document.getElementById("lesson-modal").style.display = "none"
-        document.getElementById("test-modal").style.display = "block"
+    showCurrentQuestion()
+    document.getElementById("lesson-modal").style.display = "none"
+    document.getElementById("test-modal").style.display = "block"
 
-        // Reset navigation buttons
-        document.getElementById("prev-question").disabled = true
-        document.getElementById("next-question").style.display = "inline-flex"
-        document.getElementById("submit-test").style.display = "none"
-    }
+    // Reset navigation buttons
+    document.getElementById("prev-question").disabled = true
+    document.getElementById("next-question").style.display = "inline-flex"
+    document.getElementById("submit-test").style.display = "none"
+  }
 }
 
 function showCurrentQuestion() {
-    if (!currentTest) return
+  if (!currentTest) return
 
-    const testContent = document.getElementById("test-content")
-    const currentQuestion = currentTest.questions[currentQuestionIndex]
+  const testContent = document.getElementById("test-content")
+  const currentQuestion = currentTest.questions[currentQuestionIndex]
 
-    // Update progress
-    document.getElementById("current-question").textContent = currentQuestionIndex + 1
-    document.querySelector(".progress-fill").style.width =
-        `${((currentQuestionIndex + 1) / currentTest.questions.length) * 100}%`
+  // Update progress
+  document.getElementById("current-question").textContent = currentQuestionIndex + 1
+  document.querySelector(".progress-fill").style.width =
+    `${((currentQuestionIndex + 1) / currentTest.questions.length) * 100}%`
 
-    // Update navigation buttons
-    document.getElementById("prev-question").disabled = currentQuestionIndex === 0
+  // Update navigation buttons
+  document.getElementById("prev-question").disabled = currentQuestionIndex === 0
 
-    if (currentQuestionIndex === currentTest.questions.length - 1) {
-        document.getElementById("next-question").style.display = "none"
-        document.getElementById("submit-test").style.display = "inline-flex"
-    } else {
-        document.getElementById("next-question").style.display = "inline-flex"
-        document.getElementById("submit-test").style.display = "none"
-    }
+  if (currentQuestionIndex === currentTest.questions.length - 1) {
+    document.getElementById("next-question").style.display = "none"
+    document.getElementById("submit-test").style.display = "inline-flex"
+  } else {
+    document.getElementById("next-question").style.display = "inline-flex"
+    document.getElementById("submit-test").style.display = "none"
+  }
 
-    // Show current question
-    testContent.innerHTML = `
+  // Show current question
+  testContent.innerHTML = `
           <div class="test-question">
               <h3>${currentQuestionIndex + 1}. ${currentQuestion.question}</h3>
               <div class="test-options">
@@ -651,46 +652,46 @@ function showCurrentQuestion() {
           </div>
       `
 
-    // Add animation
-    testContent.classList.add("fade-in")
-    setTimeout(() => {
-        testContent.classList.remove("fade-in")
-    }, 500)
+  // Add animation
+  testContent.classList.add("fade-in")
+  setTimeout(() => {
+    testContent.classList.remove("fade-in")
+  }, 500)
 }
 
 function submitTest() {
-    saveCurrentAnswer()
+  saveCurrentAnswer()
 
-    const results = currentTest.questions.map((question, index) => ({
-        question: question.question,
-        userAnswer: userAnswers[index] !== -1 ? question.options[userAnswers[index]] : "Не відповіли",
-        correctAnswer: question.options[question.correctAnswer],
-        isCorrect: userAnswers[index] === question.correctAnswer,
-    }))
+  const results = currentTest.questions.map((question, index) => ({
+    question: question.question,
+    userAnswer: userAnswers[index] !== -1 ? question.options[userAnswers[index]] : "Не відповіли",
+    correctAnswer: question.options[question.correctAnswer],
+    isCorrect: userAnswers[index] === question.correctAnswer,
+  }))
 
-    displayTestResults(results)
+  displayTestResults(results)
 }
 
 function displayTestResults(results) {
-    const testResults = document.getElementById("test-results")
-    const correctCount = results.filter((r) => r.isCorrect).length
-    const totalQuestions = results.length
-    const scorePercentage = Math.round((correctCount / totalQuestions) * 100)
+  const testResults = document.getElementById("test-results")
+  const correctCount = results.filter((r) => r.isCorrect).length
+  const totalQuestions = results.length
+  const scorePercentage = Math.round((correctCount / totalQuestions) * 100)
 
-    // Update score circle
-    document.querySelector(".score-number").textContent = `${scorePercentage}%`
+  // Update score circle
+  document.querySelector(".score-number").textContent = `${scorePercentage}%`
 
-    // Add appropriate color based on score
-    const scoreCircle = document.querySelector(".score-circle")
-    if (scorePercentage >= 80) {
-        scoreCircle.style.borderColor = "var(--success-color)"
-    } else if (scorePercentage >= 50) {
-        scoreCircle.style.borderColor = "var(--warning-color)"
-    } else {
-        scoreCircle.style.borderColor = "var(--error-color)"
-    }
+  // Add appropriate color based on score
+  const scoreCircle = document.querySelector(".score-circle")
+  if (scorePercentage >= 80) {
+    scoreCircle.style.borderColor = "var(--success-color)"
+  } else if (scorePercentage >= 50) {
+    scoreCircle.style.borderColor = "var(--warning-color)"
+  } else {
+    scoreCircle.style.borderColor = "var(--error-color)"
+  }
 
-    testResults.innerHTML = `
+  testResults.innerHTML = `
           <h3>Ви відповіли правильно на ${correctCount} з ${totalQuestions} питань.</h3>
           ${results
             .map(
@@ -705,211 +706,359 @@ function displayTestResults(results) {
             .join("")}
       `
 
-    document.getElementById("test-modal").style.display = "none"
-    document.getElementById("result-modal").style.display = "block"
+  document.getElementById("test-modal").style.display = "none"
+  document.getElementById("result-modal").style.display = "block"
 
-    if (correctCount === totalQuestions) {
-        showToast("Вітаємо! Ви успішно засвоїли тему!", "success")
-    } else if (scorePercentage >= 80) {
-        showToast("Чудовий результат!", "success")
-    } else if (scorePercentage >= 50) {
-        showToast("Непогано, але є над чим працювати!", "warning")
-    } else {
-        showToast("Рекомендуємо повторити матеріал", "error")
-    }
+  saveTestProgress(scorePercentage)
+
+  if (correctCount === totalQuestions) {
+    showToast("Вітаємо! Ви успішно засвоїли тему!", "success")
+  } else if (scorePercentage >= 80) {
+    showToast("Чудовий результат!", "success")
+  } else if (scorePercentage >= 50) {
+    showToast("Непогано, але є над чим працювати!", "warning")
+  } else {
+    showToast("Рекомендуємо повторити матеріал", "error")
+  }
 }
 
 function retryTest() {
-    document.getElementById("result-modal").style.display = "none"
-    startTest()
+  document.getElementById("result-modal").style.display = "none"
+  startTest()
 }
 
 function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]]
-    }
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[array[i], array[j]] = [array[j], array[i]]
+  }
 }
 
 // Contact Form
 function setupContactForm() {
-    const form = document.getElementById("contact-form")
-    if (!form) return
+  const form = document.getElementById("contact-form")
+  if (!form) return
 
-    form.addEventListener("submit", async (e) => {
-        e.preventDefault()
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault()
 
-        // Додаємо анімацію завантаження
-        const submitBtn = form.querySelector(".submit-button")
-        const originalText = submitBtn.innerHTML
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Надсилання...'
-        submitBtn.disabled = true
+    // Додаємо анімацію завантаження
+    const submitBtn = form.querySelector(".submit-button")
+    const originalText = submitBtn.innerHTML
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Надсилання...'
+    submitBtn.disabled = true
 
-        try {
-            // Імітація відправки форми
-            await new Promise((resolve) => setTimeout(resolve, 1500))
-            showToast("Повідомлення надіслано успішно!", "success")
-            form.reset()
-        } catch (error) {
-            showToast("Помилка при відправці повідомлення", "error")
-        } finally {
-            submitBtn.innerHTML = originalText
-            submitBtn.disabled = false
-        }
-    })
+    try {
+      // Імітація відправки форми
+      await new Promise((resolve) => setTimeout(resolve, 1500))
+      showToast("Повідомлення надіслано успішно!", "success")
+      form.reset()
+    } catch (error) {
+      showToast("Помилка при відправці повідомлення", "error")
+    } finally {
+      submitBtn.innerHTML = originalText
+      submitBtn.disabled = false
+    }
+  })
 }
 
 // Stats Counter
 function setupStatsCounter() {
-    const stats = document.querySelectorAll(".stat-number")
+  const stats = document.querySelectorAll(".stat-number")
 
-    if (stats.length === 0) return
+  if (stats.length === 0) return
 
-    const observer = new IntersectionObserver(
-        (entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    const target = entry.target
-                    const countTo = Number.parseInt(target.getAttribute("data-count"))
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const target = entry.target
+          const countTo = Number.parseInt(target.getAttribute("data-count"))
 
-                    let count = 0
-                    const interval = setInterval(() => {
-                        count += Math.ceil(countTo / 50)
-                        if (count >= countTo) {
-                            target.textContent = countTo
-                            clearInterval(interval)
-                        } else {
-                            target.textContent = count
-                        }
-                    }, 30)
+          let count = 0
+          const interval = setInterval(() => {
+            count += Math.ceil(countTo / 50)
+            if (count >= countTo) {
+              target.textContent = countTo
+              clearInterval(interval)
+            } else {
+              target.textContent = count
+            }
+          }, 30)
 
-                    observer.unobserve(target)
-                }
-            })
-        }, {
-            threshold: 0.5
-        },
-    )
+          observer.unobserve(target)
+        }
+      })
+    },
+    { threshold: 0.5 },
+  )
 
-    stats.forEach((stat) => {
-        observer.observe(stat)
-    })
+  stats.forEach((stat) => {
+    observer.observe(stat)
+  })
 }
 
 // Toast function
 function showToast(message, type = "success") {
-    const toast = document.getElementById("toast")
-    toast.textContent = message
+  const toast = document.getElementById("toast")
+  toast.textContent = message
 
-    // Set color based on type
-    if (type === "success") {
-        toast.style.backgroundColor = "var(--success-color)"
-    } else if (type === "error") {
-        toast.style.backgroundColor = "var(--error-color)"
-    } else if (type === "warning") {
-        toast.style.backgroundColor = "var(--warning-color)"
-        toast.style.color = "var(--background-color)"
-    } else if (type === "info") {
-        toast.style.backgroundColor = "var(--info-color)"
-    }
+  // Set color based on type
+  if (type === "success") {
+    toast.style.backgroundColor = "var(--success-color)"
+  } else if (type === "error") {
+    toast.style.backgroundColor = "var(--error-color)"
+  } else if (type === "warning") {
+    toast.style.backgroundColor = "var(--warning-color)"
+    toast.style.color = "var(--background-color)"
+  } else if (type === "info") {
+    toast.style.backgroundColor = "var(--info-color)"
+  }
 
-    toast.style.display = "block"
+  toast.style.display = "block"
 
-    // Add animation
-    toast.classList.add("fade-in")
+  // Add animation
+  toast.classList.add("fade-in")
 
-    setTimeout(() => {
-        toast.style.display = "none"
-        toast.classList.remove("fade-in")
-    }, 3000)
+  setTimeout(() => {
+    toast.style.display = "none"
+    toast.classList.remove("fade-in")
+  }, 3000)
 }
 
 function setupLessonFilter() {
-    const filterButtons = document.querySelectorAll(".filter-button")
+  const filterButtons = document.querySelectorAll(".filter-button")
 
-    filterButtons.forEach((button) => {
-        button.addEventListener("click", () => {
-            const filter = button.dataset.filter
+  filterButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const filter = button.dataset.filter
 
-            // Update active button
-            filterButtons.forEach((btn) => btn.classList.remove("active"))
-            button.classList.add("active")
+      // Update active button
+      filterButtons.forEach((btn) => btn.classList.remove("active"))
+      button.classList.add("active")
 
-            // Filter lessons
-            const lessonCards = document.querySelectorAll(".lesson-card")
+      // Filter lessons
+      const lessonCards = document.querySelectorAll(".lesson-card")
 
-            lessonCards.forEach((card) => {
-                if (filter === "all" || card.dataset.category === filter) {
-                    card.style.display = "block"
-                } else {
-                    card.style.display = "none"
-                }
-            })
-        })
+      lessonCards.forEach((card) => {
+        if (filter === "all" || card.dataset.category === filter) {
+          card.style.display = "block"
+        } else {
+          card.style.display = "none"
+        }
+      })
     })
+  })
 }
 
 function checkAuthStatus() {
-    const token = localStorage.getItem("authToken")
-    const authButton = document.querySelector(".auth-button")
-    const profileButton = document.querySelector(".profile-button")
-    const logoutButton = document.querySelector(".logout-button")
+  const token = localStorage.getItem("token")
+  const authButton = document.querySelector(".auth-button")
+  const profileButton = document.querySelector(".profile-button")
+  const logoutButton = document.querySelector(".logout-button")
 
-    if (token) {
-        // User is logged in
-        authButton.style.display = "none"
-        profileButton.style.display = "inline-block"
-        logoutButton.style.display = "inline-block"
+  if (token) {
+    // User is logged in
+    authButton.style.display = "none"
+    profileButton.style.display = "inline-block"
+    logoutButton.style.display = "inline-block"
 
-        // Verify token with server
-        verifyToken(token)
-    } else {
-        // User is not logged in
-        authButton.style.display = "inline-block"
-        profileButton.style.display = "none"
-        logoutButton.style.display = "none"
-    }
+    // Verify token with server
+    verifyToken(token)
+  } else {
+    // User is not logged in
+    authButton.style.display = "inline-block"
+    profileButton.style.display = "none"
+    logoutButton.style.display = "none"
+  }
 }
 
 async function verifyToken(token) {
-    try {
-        const response = await fetch("/api/auth/verify", {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-        })
+  try {
+    const response = await fetch("/api/auth/verify", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
 
-        if (!response.ok) {
-            // Token is invalid, remove it
-            localStorage.removeItem("authToken")
-            localStorage.removeItem("userData")
-            checkAuthStatus()
-            return
-        }
-
-        const data = await response.json()
-        localStorage.setItem("userData", JSON.stringify(data.user))
-
-        // Update profile button text with user name
-        const profileButton = document.querySelector(".profile-button")
-        if (profileButton && data.user.name) {
-            profileButton.innerHTML = `<i class="fas fa-user"></i> ${data.user.name}`
-        }
-    } catch (error) {
-        console.error("Token verification failed:", error)
-        localStorage.removeItem("authToken")
-        localStorage.removeItem("userData")
-        checkAuthStatus()
+    if (!response.ok) {
+      // Token is invalid, remove it
+      localStorage.removeItem("token")
+      localStorage.removeItem("userData")
+      checkAuthStatus()
+      return
     }
+
+    const data = await response.json()
+    localStorage.setItem("userData", JSON.stringify(data.user))
+
+    // Update profile button text with user name
+    const profileButton = document.querySelector(".profile-button")
+    if (profileButton && data.user.name) {
+      profileButton.innerHTML = `<i class="fas fa-user"></i> ${data.user.name}`
+    }
+  } catch (error) {
+    console.error("Token verification failed:", error)
+    localStorage.removeItem("token")
+    localStorage.removeItem("userData")
+    checkAuthStatus()
+  }
 }
 
 function logout() {
-    localStorage.removeItem("authToken")
-    localStorage.removeItem("userData")
-    checkAuthStatus()
-    showToast("Ви успішно вийшли з системи", "info")
+  localStorage.removeItem("token")
+  localStorage.removeItem("userData")
+  checkAuthStatus()
+  showToast("Ви успішно вийшли з системи", "info")
+}
+
+// Save test progress to server
+async function saveTestProgress(score) {
+  const token = localStorage.getItem("token")
+  if (!token || !currentLesson) {
+    console.log("[v0] No auth token or current lesson, skipping progress save")
+    return
+  }
+
+  try {
+    console.log("[v0] Saving progress for lesson:", currentLesson.id, "with score:", score)
+
+    const response = await fetch(`/api/lessons/${currentLesson.id}/complete`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ score: score }),
+    })
+
+    console.log("[v0] Server response status:", response.status)
+
+    if (response.ok) {
+      const result = await response.json()
+      console.log("[v0] Progress saved successfully:", result)
+      showToast("Прогрес збережено!", "success")
+
+      // Update local storage with new progress
+      updateLocalProgress(currentLesson.id, score)
+
+      // Update lesson card visual state
+      updateLessonCardState(currentLesson.id, true, score)
+    } else {
+      const errorData = await response.json()
+      console.error("[v0] Failed to save progress:", response.status, errorData)
+      showToast("Помилка збереження прогресу", "error")
+    }
+  } catch (error) {
+    console.error("[v0] Error saving progress:", error)
+    showToast("Помилка збереження прогресу", "error")
+  }
+}
+
+// Update local progress data
+function updateLocalProgress(lessonId, score) {
+  const progress = JSON.parse(localStorage.getItem("userProgress") || "{}")
+
+  progress[lessonId] = {
+    completed: true,
+    score: score,
+    completedAt: new Date().toISOString(),
+  }
+
+  localStorage.setItem("userProgress", JSON.stringify(progress))
+  console.log("[v0] Local progress updated:", progress)
+}
+
+// Update lesson cards with completion status
+function updateLessonCards(progressData) {
+  const lessonCards = document.querySelectorAll(".lesson-card")
+
+  lessonCards.forEach((card) => {
+    const lessonButton = card.querySelector(".lesson-button")
+    const lessonId = lessonButton?.dataset.id
+
+    if (lessonId && progressData[lessonId] && progressData[lessonId].completed) {
+      // Add completed styling
+      card.classList.add("completed")
+
+      // Update button text and add score
+      const score = progressData[lessonId].score
+      lessonButton.innerHTML = `
+        <span class="cta-text">Завершено (${score}%)</span>
+        <span class="cta-icon"><i class="fas fa-check-circle"></i></span>
+      `
+      lessonButton.classList.add("completed")
+    }
+  })
+}
+
+function updateLessonCardState(lessonId, completed, score) {
+  const lessonCard = document.querySelector(`[data-lesson-id="${lessonId}"]`)
+  if (lessonCard) {
+    if (completed) {
+      lessonCard.classList.add("completed")
+
+      // Add completion indicator
+      let completionBadge = lessonCard.querySelector(".completion-badge")
+      if (!completionBadge) {
+        completionBadge = document.createElement("div")
+        completionBadge.className = "completion-badge"
+        lessonCard.appendChild(completionBadge)
+      }
+      completionBadge.innerHTML = `<span class="checkmark">✓</span> ${score}%`
+    }
+  }
+}
+
+// Load user progress on page load
+async function loadUserProgress() {
+  const token = localStorage.getItem("token")
+  if (!token) {
+    console.log("[v0] No token found, skipping progress load")
+    return
+  }
+
+  try {
+    console.log("[v0] Loading user progress...")
+
+    const response = await fetch("/api/user/progress", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    if (response.ok) {
+      const progressData = await response.json()
+      console.log("[v0] Progress data loaded:", progressData)
+
+      // Update lesson cards with progress
+      Object.keys(progressData.lessons).forEach((lessonId) => {
+        const lessonProgress = progressData.lessons[lessonId]
+        if (lessonProgress.completed) {
+          updateLessonCardState(lessonId, true, lessonProgress.score)
+        }
+      })
+
+      // Store progress locally
+      localStorage.setItem("userProgress", JSON.stringify(progressData.lessons))
+    } else {
+      console.warn("[v0] Could not load progress:", response.status)
+    }
+  } catch (error) {
+    console.error("[v0] Error loading progress:", error)
+  }
+}
+
+// Load lessons function
+async function loadLessons() {
+  try {
+    const response = await fetch("lessons.json")
+    lessons = await response.json()
+  } catch (error) {
+    console.error("Failed to load lessons:", error)
+  }
 }
 
 console.log("Node.js Course script loaded successfully!")

@@ -326,17 +326,23 @@ app.put("/api/user/change-password", authenticateToken, async (req, res) => {
 
 app.get("/api/user/progress", authenticateToken, async (req, res) => {
     try {
+        console.log("[v0] Loading progress for user:", req.user.userId)
+
         // Get user progress
         const progressResult = await pool.query(
             "SELECT lesson_id, completed, score, completed_at FROM user_progress WHERE user_id = $1",
             [req.user.userId],
         )
 
+        console.log("[v0] Progress query result:", progressResult.rows)
+
         // Get user achievements
         const achievementsResult = await pool.query(
             "SELECT achievement_id, earned_at FROM user_achievements WHERE user_id = $1",
             [req.user.userId],
         )
+
+        console.log("[v0] Achievements query result:", achievementsResult.rows)
 
         // Process progress data
         const lessons = {}
@@ -361,15 +367,18 @@ app.get("/api/user/progress", authenticateToken, async (req, res) => {
             achievements[row.achievement_id] = row.earned_at
         })
 
-        res.json({
+        const progressData = {
             lessons,
             completedLessons,
             totalScore,
             achievements,
             quickLearner: achievements.quick_learner ? true : false,
-        })
+        }
+
+        console.log("[v0] Sending progress data:", progressData)
+        res.json(progressData)
     } catch (error) {
-        console.error("Progress fetch error:", error)
+        console.error("[v0] Progress fetch error:", error)
         res.status(500).json({
             message: "Помилка завантаження прогресу"
         })
