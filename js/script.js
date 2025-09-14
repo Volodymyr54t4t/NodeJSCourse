@@ -1,15 +1,7 @@
 // Import AOS library
 const AOS = window.AOS
 
-document.addEventListener("DOMContentLoaded", async () => {
-  console.log("DOM loaded, initializing course...")
-
-  // Load lessons first
-  await loadLessons()
-
-  // Then load user progress
-  await loadUserProgress()
-
+document.addEventListener("DOMContentLoaded", () => {
   // Initialize AOS (Animate On Scroll)
   AOS.init({
     duration: 800,
@@ -49,6 +41,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupTestNavigation()
 
   checkAuthStatus()
+  loadUserProgress()
 })
 
 let lessons = []
@@ -239,7 +232,7 @@ function displayLessons(lessons) {
   container.innerHTML = lessons
     .map(
       (lesson) => `
-          <div class="lesson-card" data-lesson-id="${lesson.id}" data-category="${lesson.category}">
+          <div class="lesson-card" data-category="${lesson.category}">
               <div class="lesson-icon">
                   <i class="${getLessonIcon(lesson.title)}"></i>
               </div>
@@ -852,7 +845,7 @@ function setupLessonFilter() {
 }
 
 function checkAuthStatus() {
-  const token = localStorage.getItem("token")
+  const token = localStorage.getItem("authToken")
   const authButton = document.querySelector(".auth-button")
   const profileButton = document.querySelector(".profile-button")
   const logoutButton = document.querySelector(".logout-button")
@@ -885,7 +878,7 @@ async function verifyToken(token) {
 
     if (!response.ok) {
       // Token is invalid, remove it
-      localStorage.removeItem("token")
+      localStorage.removeItem("authToken")
       localStorage.removeItem("userData")
       checkAuthStatus()
       return
@@ -901,14 +894,14 @@ async function verifyToken(token) {
     }
   } catch (error) {
     console.error("Token verification failed:", error)
-    localStorage.removeItem("token")
+    localStorage.removeItem("authToken")
     localStorage.removeItem("userData")
     checkAuthStatus()
   }
 }
 
 function logout() {
-  localStorage.removeItem("token")
+  localStorage.removeItem("authToken")
   localStorage.removeItem("userData")
   checkAuthStatus()
   showToast("Ви успішно вийшли з системи", "info")
@@ -916,7 +909,7 @@ function logout() {
 
 // Save test progress to server
 async function saveTestProgress(score) {
-  const token = localStorage.getItem("token")
+  const token = localStorage.getItem("authToken")
   if (!token || !currentLesson) {
     console.log("[v0] No auth token or current lesson, skipping progress save")
     return
@@ -934,21 +927,14 @@ async function saveTestProgress(score) {
       body: JSON.stringify({ score: score }),
     })
 
-    console.log("[v0] Server response status:", response.status)
-
     if (response.ok) {
-      const result = await response.json()
-      console.log("[v0] Progress saved successfully:", result)
+      console.log("[v0] Progress saved successfully")
       showToast("Прогрес збережено!", "success")
 
       // Update local storage with new progress
       updateLocalProgress(currentLesson.id, score)
-
-      // Update lesson card visual state
-      updateLessonCardState(currentLesson.id, true, score)
     } else {
-      const errorData = await response.json()
-      console.error("[v0] Failed to save progress:", response.status, errorData)
+      console.error("[v0] Failed to save progress:", response.status)
       showToast("Помилка збереження прогресу", "error")
     }
   } catch (error) {
@@ -969,6 +955,50 @@ function updateLocalProgress(lessonId, score) {
 
   localStorage.setItem("userProgress", JSON.stringify(progress))
   console.log("[v0] Local progress updated:", progress)
+}
+
+// Load user progress on page load
+async function loadUserProgress() {
+  const token = localStorage.getItem("authToken")
+  if (!token) {
+    console.log("[v0] No auth token, skipping progress load")
+    return
+  }
+
+  try {
+    console.log("[v0] Loading user progress...")
+
+    const response = await fetch("/api/user/progress", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+
+    if (response.ok) {
+      const progressData = await response.json()
+      console.log("[v0] Progress loaded successfully:", progressData)
+
+      // Store progress in localStorage for quick access
+      localStorage.setItem("userProgress", JSON.stringify(progressData.lessons))
+      localStorage.setItem(
+        "userStats",
+        JSON.stringify({
+          completedLessons: progressData.completedLessons,
+          totalScore: progressData.totalScore,
+          achievements: progressData.achievements,
+        }),
+      )
+
+      // Update lesson cards to show completion status
+      updateLessonCards(progressData.lessons)
+    } else {
+      console.error("[v0] Failed to load progress:", response.status)
+    }
+  } catch (error) {
+    console.error("[v0] Error loading progress:", error)
+  }
 }
 
 // Update lesson cards with completion status
@@ -992,73 +1022,6 @@ function updateLessonCards(progressData) {
       lessonButton.classList.add("completed")
     }
   })
-}
-
-function updateLessonCardState(lessonId, completed, score) {
-  const lessonCard = document.querySelector(`[data-lesson-id="${lessonId}"]`)
-  if (lessonCard) {
-    if (completed) {
-      lessonCard.classList.add("completed")
-
-      // Add completion indicator
-      let completionBadge = lessonCard.querySelector(".completion-badge")
-      if (!completionBadge) {
-        completionBadge = document.createElement("div")
-        completionBadge.className = "completion-badge"
-        lessonCard.appendChild(completionBadge)
-      }
-      completionBadge.innerHTML = `<span class="checkmark">✓</span> ${score}%`
-    }
-  }
-}
-
-// Load user progress on page load
-async function loadUserProgress() {
-  const token = localStorage.getItem("token")
-  if (!token) {
-    console.log("[v0] No token found, skipping progress load")
-    return
-  }
-
-  try {
-    console.log("[v0] Loading user progress...")
-
-    const response = await fetch("/api/user/progress", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-
-    if (response.ok) {
-      const progressData = await response.json()
-      console.log("[v0] Progress data loaded:", progressData)
-
-      // Update lesson cards with progress
-      Object.keys(progressData.lessons).forEach((lessonId) => {
-        const lessonProgress = progressData.lessons[lessonId]
-        if (lessonProgress.completed) {
-          updateLessonCardState(lessonId, true, lessonProgress.score)
-        }
-      })
-
-      // Store progress locally
-      localStorage.setItem("userProgress", JSON.stringify(progressData.lessons))
-    } else {
-      console.warn("[v0] Could not load progress:", response.status)
-    }
-  } catch (error) {
-    console.error("[v0] Error loading progress:", error)
-  }
-}
-
-// Load lessons function
-async function loadLessons() {
-  try {
-    const response = await fetch("lessons.json")
-    lessons = await response.json()
-  } catch (error) {
-    console.error("Failed to load lessons:", error)
-  }
 }
 
 console.log("Node.js Course script loaded successfully!")
