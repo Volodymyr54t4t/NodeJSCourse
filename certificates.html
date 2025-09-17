@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор Сертифікатів Node.js</title>
+    <link rel="stylesheet" href="css/certificates.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 Генератор Сертифікатів Node.js</h1>
+            <p>Створіть персоналізований сертифікат для курсу Node.js</p>
+        </div>
+
+        <div class="form-container">
+            <form id="certificateForm">
+                <div class="form-group">
+                    <label for="fullName">Повне ім'я:</label>
+                    <input type="text" id="fullName" name="fullName" placeholder="Введіть повне ім'я" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="module">Оберіть модуль:</label>
+                    <select id="module" name="module" required>
+                        <option value="">-- Оберіть модуль --</option>
+                        <option value="Основи Node.js">Основи Node.js</option>
+                        <option value="Express.js Framework">Express.js Framework</option>
+                        <option value="Робота з базами даних">Робота з базами даних</option>
+                        <option value="RESTful API">RESTful API</option>
+                        <option value="Тестування в Node.js">Тестування в Node.js</option>
+                        <option value="NPM та управління пакетами">NPM та управління пакетами</option>
+                        <option value="Асинхронне програмування">Асинхронне програмування</option>
+                        <option value="Безпека в Node.js">Безпека в Node.js</option>
+                        <option value="Деплой та хостинг">Деплой та хостинг</option>
+                        <option value="Мікросервіси">Мікросервіси</option>
+                    </select>
+                </div>
+
+                <button type="submit" id="generateBtn">
+                    <span class="btn-text">Згенерувати Сертифікат</span>
+                    <div class="loading-spinner"></div>
+                </button>
+            </form>
+        </div>
+
+        <div class="canvas-container" id="canvasContainer" style="display: none;">
+            <canvas id="certificateCanvas"></canvas>
+            <div class="download-section">
+                <button id="downloadBtn" class="download-btn">
+                    📥 Завантажити Сертифікат
+                </button>
+            </div>
+        </div>
+
+        <div class="notification" id="notification"></div>
+    </div>
+
+    <script src="js/certificates.js"></script>
+</body>
+
+</html>
