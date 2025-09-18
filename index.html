@@ -36,7 +36,6 @@
                 <li><a href="#home" class="nav-button"><i class="fas fa-home"></i> Головна</a></li>
                 <li><a href="#about" class="nav-button"><i class="fas fa-info-circle"></i> Про курс</a></li>
                 <li><a href="#lessons" class="nav-button"><i class="fas fa-book"></i> Уроки</a></li>
-                <li><a href="#projects" class="nav-button"><i class="fas fa-project-diagram"></i> Проекти</a></li>
                 <li><a href="#contact" class="nav-button"><i class="fas fa-envelope"></i> Контакти</a></li>
                 <li><a href="/auth" class="nav-button auth-button"><i class="fas fa-sign-in-alt"></i> Вхід</a></li>
                 <li><a href="/profile" class="nav-button profile-button" style="display: none;"><i
@@ -211,84 +210,6 @@ app.listen(3000, () => {
             </div>
         </section>
 
-        <section id="projects">
-            <h2 class="section-title" data-aos="fade-up">Практичні проекти</h2>
-            <div class="projects-grid">
-                <div class="project-card" data-aos="flip-left" data-aos-delay="200">
-                    <div class="project-icon"><i class="fas fa-terminal"></i></div>
-                    <h3>CLI інструмент</h3>
-                    <p>Створіть потужний інструмент командного рядка з аргументами, опціями та інтерактивними меню.</p>
-                    <div class="project-tech">
-                        <span>Node.js</span>
-                        <span>Commander.js</span>
-                        <span>Inquirer.js</span>
-                    </div>
-                    <div class="project-difficulty">Початковий</div>
-                    <a href="#" class="project-link">Дізнатися більше <i class="fas fa-arrow-right"></i></a>
-                </div>
-                <div class="project-card" data-aos="flip-left" data-aos-delay="300">
-                    <div class="project-icon"><i class="fas fa-server"></i></div>
-                    <h3>E-commerce API</h3>
-                    <p>Повноцінний REST API для інтернет-магазину з аутентифікацією, платежами та адмін панеллю.</p>
-                    <div class="project-tech">
-                        <span>Express.js</span>
-                        <span>MongoDB</span>
-                        <span>Stripe API</span>
-                    </div>
-                    <div class="project-difficulty">Середній</div>
-                    <a href="#" class="project-link">Дізнатися більше <i class="fas fa-arrow-right"></i></a>
-                </div>
-                <div class="project-card" data-aos="flip-left" data-aos-delay="400">
-                    <div class="project-icon"><i class="fas fa-comments"></i></div>
-                    <h3>Чат платформа</h3>
-                    <p>Чат в реальному часі з кімнатами, приватними повідомленнями та файловими вкладеннями.</p>
-                    <div class="project-tech">
-                        <span>Socket.io</span>
-                        <span>Redis</span>
-                        <span>Multer</span>
-                    </div>
-                    <div class="project-difficulty">Складний</div>
-                    <a href="#" class="project-link">Дізнатися більше <i class="fas fa-arrow-right"></i></a>
-                </div>
-                <div class="project-card" data-aos="flip-left" data-aos-delay="500">
-                    <div class="project-icon"><i class="fas fa-chart-line"></i></div>
-                    <h3>Analytics Dashboard</h3>
-                    <p>Система аналітики з візуалізацією даних, звітами та real-time метриками.</p>
-                    <div class="project-tech">
-                        <span>Express.js</span>
-                        <span>PostgreSQL</span>
-                        <span>Chart.js</span>
-                    </div>
-                    <div class="project-difficulty">Складний</div>
-                    <a href="#" class="project-link">Дізнатися більше <i class="fas fa-arrow-right"></i></a>
-                </div>
-                <div class="project-card" data-aos="flip-left" data-aos-delay="600">
-                    <div class="project-icon"><i class="fas fa-cloud"></i></div>
-                    <h3>Microservices Architecture</h3>
-                    <p>Розподілена система з мікросервісами, API Gateway та контейнеризацією.</p>
-                    <div class="project-tech">
-                        <span>Docker</span>
-                        <span>Kubernetes</span>
-                        <span>RabbitMQ</span>
-                    </div>
-                    <div class="project-difficulty">Expert</div>
-                    <a href="#" class="project-link">Дізнатися більше <i class="fas fa-arrow-right"></i></a>
-                </div>
-                <div class="project-card" data-aos="flip-left" data-aos-delay="700">
-                    <div class="project-icon"><i class="fas fa-robot"></i></div>
-                    <h3>AI-powered Bot</h3>
-                    <p>Інтелектуальний бот з обробкою природної мови та машинним навчанням.</p>
-                    <div class="project-tech">
-                        <span>OpenAI API</span>
-                        <span>TensorFlow.js</span>
-                        <span>Telegram Bot</span>
-                    </div>
-                    <div class="project-difficulty">Expert</div>
-                    <a href="#" class="project-link">Дізнатися більше <i class="fas fa-arrow-right"></i></a>
-                </div>
-            </div>
-        </section>
-
         <section id="testimonials">
             <h2 class="section-title" data-aos="fade-up">Відгуки студентів</h2>
             <div class="testimonials-container" data-aos="fade-up" data-aos-delay="200">
@@ -344,6 +265,96 @@ app.listen(3000, () => {
                             створила власний стартап."</p>
                         <p class="testimonial-author">Анна С., Tech Entrepreneur</p>
                         <p class="testimonial-company">Founder @ TechStart</p>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-avatar">
+                        <img src="https://randomuser.me/api/portraits/men/23.jpg" alt="Дмитро В.">
+                    </div>
+                    <div class="testimonial-content">
+                        <div class="testimonial-stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="testimonial-text">"Структурований підхід до навчання та якісні матеріали. За 3 місяці
+                            перейшов з Junior на Middle позицію."</p>
+                        <p class="testimonial-author">Дмитро В., Node.js Developer</p>
+                        <p class="testimonial-company">GlobalLogic</p>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-avatar">
+                        <img src="https://randomuser.me/api/portraits/women/41.jpg" alt="Марія Т.">
+                    </div>
+                    <div class="testimonial-content">
+                        <div class="testimonial-stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="testimonial-text">"Відмінне пояснення складних концепцій. Асинхронне програмування
+                            стало зрозумілим завдяки цьому курсу."</p>
+                        <p class="testimonial-author">Марія Т., Backend Developer</p>
+                        <p class="testimonial-company">Luxoft</p>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-avatar">
+                        <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="Андрій Л.">
+                    </div>
+                    <div class="testimonial-content">
+                        <div class="testimonial-stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="testimonial-text">"Курс допоміг мені змінити кар'єру з фронтенду на бекенд. Тепер
+                            розробляю API для великих проектів."</p>
+                        <p class="testimonial-author">Андрій Л., API Developer</p>
+                        <p class="testimonial-company">Ciklum</p>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-avatar">
+                        <img src="https://randomuser.me/api/portraits/women/29.jpg" alt="Катерина М.">
+                    </div>
+                    <div class="testimonial-content">
+                        <div class="testimonial-stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="testimonial-text">"Практичні завдання та реальні приклади роблять навчання ефективним.
+                            Рекомендую всім початківцям!"</p>
+                        <p class="testimonial-author">Катерина М., Junior Developer</p>
+                        <p class="testimonial-company">N-iX</p>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-avatar">
+                        <img src="https://randomuser.me/api/portraits/men/52.jpg" alt="Олександр Р.">
+                    </div>
+                    <div class="testimonial-content">
+                        <div class="testimonial-stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <p class="testimonial-text">"Глибокі знання з мікросервісів та архітектури. Курс підготував мене
+                            до роботи в enterprise проектах."</p>
+                        <p class="testimonial-author">Олександр Р., Senior Developer</p>
+                        <p class="testimonial-company">Infopulse</p>
                     </div>
                 </div>
             </div>
@@ -528,7 +539,6 @@ app.listen(3000, () => {
                     <li><a href="#home"><i class="fas fa-chevron-right"></i> Головна</a></li>
                     <li><a href="#about"><i class="fas fa-chevron-right"></i> Про курс</a></li>
                     <li><a href="#lessons"><i class="fas fa-chevron-right"></i> Уроки</a></li>
-                    <li><a href="#projects"><i class="fas fa-chevron-right"></i> Проекти</a></li>
                     <li><a href="#contact"><i class="fas fa-chevron-right"></i> Контакти</a></li>
                 </ul>
             </div>

@@ -420,11 +420,13 @@ nav {
   font-family: "Fira Code", "Monaco", "Consolas", monospace;
   font-size: 0.9rem;
   line-height: 1.5;
-  overflow-x: auto;
+  overflow: hidden;
 }
 
 .code-content pre {
   margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 /* Sections */
