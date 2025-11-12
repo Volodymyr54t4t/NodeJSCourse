@@ -1,23 +1,13 @@
- // 🔧 Визначаємо, де зараз запущений сайт — локально чи онлайн
- const BASE_URL =
-     window.location.hostname === "localhost" ?
-     "http://localhost:3000" // 🖥 Локальний сервер
-     :
-     "https://nodejscourse-lx2g.onrender.com/"; // ☁️ Онлайн-сервер Render
-
- // 🔁 Використання в будь-якому запиті
- async function loadCompetitions() {
-     try {
-         const response = await fetch(`${BASE_URL}/api/competitions`);
-         const data = await response.json();
-         console.log("✅ Дані отримані:", data);
-     } catch (error) {
-         console.error("❌ Помилка під час запиту:", error);
-     }
- }
-
- loadCompetitions();
-
+// 🔧 Визначаємо, де зараз запущений сайт — локально чи онлайн
+let BASE_URL
+if (window.location.hostname === "localhost") {
+  // 🖥️ Локальний режим
+  BASE_URL = "http://localhost:3000"
+} else {
+  // ☁️ Онлайн-сервер Render
+  BASE_URL = "https://nodejscourse-lx2g.onrender.com/"
+}
+console.log("📡 Підключення до:", BASE_URL)
  class CertificateGenerator {
      constructor() {
          this.canvas = document.getElementById("certificateCanvas")
