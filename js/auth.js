@@ -1,170 +1,190 @@
-class AuthManager {
-    constructor() {
-        this.apiUrl = "http://localhost:3000/api"
-        this.init()
-    }
+ // 🔧 Визначаємо, де зараз запущений сайт — локально чи онлайн
+ const BASE_URL =
+     window.location.hostname === "localhost" ?
+     "http://localhost:3000" // 🖥 Локальний сервер
+     :
+     "https://nodejscourse-lx2g.onrender.com/"; // ☁️ Онлайн-сервер Render
 
-    init() {
-        this.bindEvents()
-        this.checkAuthStatus()
-    }
+ // 🔁 Використання в будь-якому запиті
+ async function loadCompetitions() {
+     try {
+         const response = await fetch(`${BASE_URL}/api/competitions`);
+         const data = await response.json();
+         console.log("✅ Дані отримані:", data);
+     } catch (error) {
+         console.error("❌ Помилка під час запиту:", error);
+     }
+ }
 
-    bindEvents() {
-        // Form switching
-        document.getElementById("showRegister").addEventListener("click", (e) => {
-            e.preventDefault()
-            this.showRegisterForm()
-        })
+ loadCompetitions();
 
-        document.getElementById("showLogin").addEventListener("click", (e) => {
-            e.preventDefault()
-            this.showLoginForm()
-        })
+ class AuthManager {
+     constructor() {
+         this.apiUrl = "http://localhost:3000/api"
+         this.init()
+     }
 
-        // Form submissions
-        document.getElementById("loginFormElement").addEventListener("submit", (e) => {
-            e.preventDefault()
-            this.handleLogin(e)
-        })
+     init() {
+         this.bindEvents()
+         this.checkAuthStatus()
+     }
 
-        document.getElementById("registerFormElement").addEventListener("submit", (e) => {
-            e.preventDefault()
-            this.handleRegister(e)
-        })
-    }
+     bindEvents() {
+         // Form switching
+         document.getElementById("showRegister").addEventListener("click", (e) => {
+             e.preventDefault()
+             this.showRegisterForm()
+         })
 
-    showRegisterForm() {
-        document.getElementById("loginForm").classList.add("hidden")
-        document.getElementById("registerForm").classList.remove("hidden")
-    }
+         document.getElementById("showLogin").addEventListener("click", (e) => {
+             e.preventDefault()
+             this.showLoginForm()
+         })
 
-    showLoginForm() {
-        document.getElementById("registerForm").classList.add("hidden")
-        document.getElementById("loginForm").classList.remove("hidden")
-    }
+         // Form submissions
+         document.getElementById("loginFormElement").addEventListener("submit", (e) => {
+             e.preventDefault()
+             this.handleLogin(e)
+         })
 
-    async handleLogin(event) {
-        const formData = new FormData(event.target)
-        const loginData = {
-            email: formData.get("email"),
-            password: formData.get("password"),
-        }
+         document.getElementById("registerFormElement").addEventListener("submit", (e) => {
+             e.preventDefault()
+             this.handleRegister(e)
+         })
+     }
 
-        try {
-            const response = await fetch(`${this.apiUrl}/auth/login`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(loginData),
-            })
+     showRegisterForm() {
+         document.getElementById("loginForm").classList.add("hidden")
+         document.getElementById("registerForm").classList.remove("hidden")
+     }
 
-            const result = await response.json()
+     showLoginForm() {
+         document.getElementById("registerForm").classList.add("hidden")
+         document.getElementById("loginForm").classList.remove("hidden")
+     }
 
-            if (response.ok) {
-                localStorage.setItem("token", result.token)
-                localStorage.setItem("user", JSON.stringify(result.user))
-                this.showNotification("Успішний вхід!", "success")
+     async handleLogin(event) {
+         const formData = new FormData(event.target)
+         const loginData = {
+             email: formData.get("email"),
+             password: formData.get("password"),
+         }
 
-                setTimeout(() => {
-                    window.location.href = "profile.html"
-                }, 1500)
-            } else {
-                this.showNotification(result.message || "Помилка входу", "error")
-            }
-        } catch (error) {
-            console.error("Login error:", error)
-            this.showNotification("Помилка з'єднання з сервером", "error")
-        }
-    }
+         try {
+             const response = await fetch(`${this.apiUrl}/auth/login`, {
+                 method: "POST",
+                 headers: {
+                     "Content-Type": "application/json",
+                 },
+                 body: JSON.stringify(loginData),
+             })
 
-    async handleRegister(event) {
-        const formData = new FormData(event.target)
-        const password = formData.get("password")
-        const confirmPassword = formData.get("confirmPassword")
+             const result = await response.json()
 
-        if (password !== confirmPassword) {
-            this.showNotification("Паролі не співпадають", "error")
-            return
-        }
+             if (response.ok) {
+                 localStorage.setItem("token", result.token)
+                 localStorage.setItem("user", JSON.stringify(result.user))
+                 this.showNotification("Успішний вхід!", "success")
 
-        const registerData = {
-            name: formData.get("name"),
-            email: formData.get("email"),
-            password: password,
-        }
+                 setTimeout(() => {
+                     window.location.href = "profile.html"
+                 }, 1500)
+             } else {
+                 this.showNotification(result.message || "Помилка входу", "error")
+             }
+         } catch (error) {
+             console.error("Login error:", error)
+             this.showNotification("Помилка з'єднання з сервером", "error")
+         }
+     }
 
-        try {
-            const response = await fetch(`${this.apiUrl}/auth/register`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(registerData),
-            })
+     async handleRegister(event) {
+         const formData = new FormData(event.target)
+         const password = formData.get("password")
+         const confirmPassword = formData.get("confirmPassword")
 
-            const result = await response.json()
+         if (password !== confirmPassword) {
+             this.showNotification("Паролі не співпадають", "error")
+             return
+         }
 
-            if (response.ok) {
-                this.showNotification("Реєстрація успішна! Тепер увійдіть в акаунт", "success")
-                this.showLoginForm()
+         const registerData = {
+             name: formData.get("name"),
+             email: formData.get("email"),
+             password: password,
+         }
 
-                // Pre-fill login form
-                document.getElementById("loginEmail").value = registerData.email
-            } else {
-                this.showNotification(result.message || "Помилка реєстрації", "error")
-            }
-        } catch (error) {
-            console.error("Register error:", error)
-            this.showNotification("Помилка з'єднання з сервером", "error")
-        }
-    }
+         try {
+             const response = await fetch(`${this.apiUrl}/auth/register`, {
+                 method: "POST",
+                 headers: {
+                     "Content-Type": "application/json",
+                 },
+                 body: JSON.stringify(registerData),
+             })
 
-    checkAuthStatus() {
-        const token = localStorage.getItem("token")
-        if (token) {
-            // Verify token with server
-            this.verifyToken(token)
-        }
-    }
+             const result = await response.json()
 
-    async verifyToken(token) {
-        try {
-            const response = await fetch(`${this.apiUrl}/auth/verify`, {
-                method: "GET",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
+             if (response.ok) {
+                 this.showNotification("Реєстрація успішна! Тепер увійдіть в акаунт", "success")
+                 this.showLoginForm()
 
-            if (response.ok) {
-                // Token is valid, redirect to profile
-                window.location.href = "profile.html"
-            } else {
-                // Token is invalid, remove it
-                localStorage.removeItem("token")
-                localStorage.removeItem("user")
-            }
-        } catch (error) {
-            console.error("Token verification error:", error)
-            localStorage.removeItem("token")
-            localStorage.removeItem("user")
-        }
-    }
+                 // Pre-fill login form
+                 document.getElementById("loginEmail").value = registerData.email
+             } else {
+                 this.showNotification(result.message || "Помилка реєстрації", "error")
+             }
+         } catch (error) {
+             console.error("Register error:", error)
+             this.showNotification("Помилка з'єднання з сервером", "error")
+         }
+     }
 
-    showNotification(message, type = "success") {
-        const notification = document.getElementById("notification")
-        notification.textContent = message
-        notification.className = `notification ${type}`
-        notification.classList.add("show")
+     checkAuthStatus() {
+         const token = localStorage.getItem("token")
+         if (token) {
+             // Verify token with server
+             this.verifyToken(token)
+         }
+     }
 
-        setTimeout(() => {
-            notification.classList.remove("show")
-        }, 4000)
-    }
-}
+     async verifyToken(token) {
+         try {
+             const response = await fetch(`${this.apiUrl}/auth/verify`, {
+                 method: "GET",
+                 headers: {
+                     Authorization: `Bearer ${token}`,
+                 },
+             })
 
-// Initialize auth manager when DOM is loaded
-document.addEventListener("DOMContentLoaded", () => {
-    new AuthManager()
-})
+             if (response.ok) {
+                 // Token is valid, redirect to profile
+                 window.location.href = "profile.html"
+             } else {
+                 // Token is invalid, remove it
+                 localStorage.removeItem("token")
+                 localStorage.removeItem("user")
+             }
+         } catch (error) {
+             console.error("Token verification error:", error)
+             localStorage.removeItem("token")
+             localStorage.removeItem("user")
+         }
+     }
+
+     showNotification(message, type = "success") {
+         const notification = document.getElementById("notification")
+         notification.textContent = message
+         notification.className = `notification ${type}`
+         notification.classList.add("show")
+
+         setTimeout(() => {
+             notification.classList.remove("show")
+         }, 4000)
+     }
+ }
+
+ // Initialize auth manager when DOM is loaded
+ document.addEventListener("DOMContentLoaded", () => {
+     new AuthManager()
+ })
