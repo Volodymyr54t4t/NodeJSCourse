@@ -37,9 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Setup lesson filter
   setupLessonFilter()
 
-  // Setup test navigation
-  setupTestNavigation()
-
+  // Check auth and load progress
   checkAuthStatus()
   loadUserProgress()
 })
@@ -49,11 +47,14 @@ let currentLesson = null
 let currentTest = null
 let currentQuestionIndex = 0
 let userAnswers = []
+let originalCorrectAnswers = []
 
 // Custom Cursor
 function setupCustomCursor() {
   const cursorGlow = document.querySelector(".cursor-glow")
   const cursorDot = document.querySelector(".cursor-dot")
+
+  if (!cursorGlow || !cursorDot) return
 
   document.addEventListener("mousemove", (e) => {
     cursorGlow.style.left = e.clientX + "px"
@@ -88,6 +89,8 @@ function setupNavigation() {
   const menuToggle = document.querySelector(".menu-toggle")
   const navLinks = document.querySelector(".nav-links")
 
+  if (!menuToggle || !navLinks) return
+
   menuToggle.addEventListener("click", () => {
     menuToggle.classList.toggle("active")
     navLinks.classList.toggle("active")
@@ -109,16 +112,16 @@ function setupScrollEffects() {
 
   window.addEventListener("scroll", () => {
     // Header effect
-    if (window.scrollY > 100) {
+    if (header && window.scrollY > 100) {
       header.classList.add("scrolled")
-    } else {
+    } else if (header) {
       header.classList.remove("scrolled")
     }
 
     // Back to top button
-    if (window.scrollY > 500) {
+    if (backToTop && window.scrollY > 500) {
       backToTop.classList.add("visible")
-    } else {
+    } else if (backToTop) {
       backToTop.classList.remove("visible")
     }
   })
@@ -148,6 +151,7 @@ function initParticles() {
 
   // Import Three.js library
   const THREE = window.THREE
+  if (!THREE) return
 
   const scene = new THREE.Scene()
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
@@ -229,10 +233,12 @@ async function fetchLessons() {
 
 function displayLessons(lessons) {
   const container = document.getElementById("lessons-container")
+  if (!container) return
+
   container.innerHTML = lessons
     .map(
       (lesson) => `
-          <div class="lesson-card" data-category="${lesson.category}">
+          <div class="lesson-card" data-category="${getLessonCategory(lesson.title)}">
               <div class="lesson-icon">
                   <i class="${getLessonIcon(lesson.title)}"></i>
               </div>
@@ -489,10 +495,15 @@ function setupEventListeners() {
   const copyCodeBtn = document.querySelector(".copy-code-btn")
   const continueBtn = document.getElementById("continue-learning")
   const logoutBtn = document.getElementById("logout-btn")
+  const prevBtn = document.getElementById("prev-question")
+  const nextBtn = document.getElementById("next-question")
+  const startJourneyBtn = document.getElementById("start-journey")
 
-  document.getElementById("start-journey").addEventListener("click", () => {
-    document.getElementById("lessons").scrollIntoView({ behavior: "smooth" })
-  })
+  if (startJourneyBtn) {
+    startJourneyBtn.addEventListener("click", () => {
+      document.getElementById("lessons")?.scrollIntoView({ behavior: "smooth" })
+    })
+  }
 
   closeBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -512,10 +523,12 @@ function setupEventListeners() {
     }
   })
 
-  startTestBtn.addEventListener("click", startTest)
-  submitTestBtn.addEventListener("click", submitTest)
-  retryTestBtn.addEventListener("click", retryTest)
-  runCodeBtn.addEventListener("click", executeCode)
+  if (startTestBtn) startTestBtn.addEventListener("click", startTest)
+  if (submitTestBtn) submitTestBtn.addEventListener("click", submitTest)
+  if (retryTestBtn) retryTestBtn.addEventListener("click", retryTest)
+  if (runCodeBtn) runCodeBtn.addEventListener("click", executeCode)
+  if (prevBtn) prevBtn.addEventListener("click", previousQuestion)
+  if (nextBtn) nextBtn.addEventListener("click", nextQuestion)
 
   if (logoutBtn) {
     logoutBtn.addEventListener("click", logout)
@@ -538,128 +551,145 @@ function setupEventListeners() {
   }
 }
 
-function setupTestNavigation() {
-  const prevBtn = document.getElementById("prev-question")
-  const nextBtn = document.getElementById("next-question")
-  const submitBtn = document.getElementById("submit-test")
-
-  if (!prevBtn || !nextBtn || !submitBtn) return
-
-  prevBtn.addEventListener("click", () => {
-    if (currentQuestionIndex > 0) {
-      saveCurrentAnswer()
-      currentQuestionIndex--
-      showCurrentQuestion()
-    }
-  })
-
-  nextBtn.addEventListener("click", () => {
-    saveCurrentAnswer()
-    currentQuestionIndex++
-
-    if (currentQuestionIndex >= currentTest.questions.length) {
-      currentQuestionIndex = currentTest.questions.length - 1
-      nextBtn.style.display = "none"
-      submitBtn.style.display = "inline-flex"
-    } else {
-      showCurrentQuestion()
-    }
-  })
-}
-
-function saveCurrentAnswer() {
-  if (!currentTest) return
-
-  const selected = document.querySelector(`input[name="current-question"]:checked`)
-  if (selected) {
-    userAnswers[currentQuestionIndex] = Number.parseInt(selected.value)
-  } else {
-    userAnswers[currentQuestionIndex] = -1
-  }
-}
-
 function startTest() {
   if (currentLesson && currentLesson.test) {
+    // Створюємо глибоку копію тесту
     currentTest = JSON.parse(JSON.stringify(currentLesson.test))
-    shuffleArray(currentTest.questions)
-    currentTest.questions.forEach((question) => shuffleArray(question.options))
-
-    // Reset test state
+    
+    // Зберігаємо оригінальні індекси правильних відповідей ДО будь-яких змін
+    originalCorrectAnswers = currentTest.questions.map(q => q.correctAnswer)
+    
+    // Ініціалізуємо стан тесту
     currentQuestionIndex = 0
     userAnswers = new Array(currentTest.questions.length).fill(-1)
 
-    // Update total questions count
+    // Оновлюємо загальну кількість питань
     document.getElementById("total-questions").textContent = currentTest.questions.length
 
+    // Показуємо перше питання
     showCurrentQuestion()
+    
+    // Переключаємо модальні вікна
     document.getElementById("lesson-modal").style.display = "none"
     document.getElementById("test-modal").style.display = "block"
-
-    // Reset navigation buttons
-    document.getElementById("prev-question").disabled = true
-    document.getElementById("next-question").style.display = "inline-flex"
-    document.getElementById("submit-test").style.display = "none"
   }
 }
 
 function showCurrentQuestion() {
-  if (!currentTest) return
-
-  const testContent = document.getElementById("test-content")
-  const currentQuestion = currentTest.questions[currentQuestionIndex]
-
-  // Update progress
-  document.getElementById("current-question").textContent = currentQuestionIndex + 1
-  document.querySelector(".progress-fill").style.width =
-    `${((currentQuestionIndex + 1) / currentTest.questions.length) * 100}%`
-
-  // Update navigation buttons
-  document.getElementById("prev-question").disabled = currentQuestionIndex === 0
-
-  if (currentQuestionIndex === currentTest.questions.length - 1) {
-    document.getElementById("next-question").style.display = "none"
-    document.getElementById("submit-test").style.display = "inline-flex"
-  } else {
-    document.getElementById("next-question").style.display = "inline-flex"
-    document.getElementById("submit-test").style.display = "none"
+  if (!currentTest || !currentTest.questions[currentQuestionIndex]) {
+    console.error("No current test or question available")
+    return
   }
 
-  // Show current question
-  testContent.innerHTML = `
-          <div class="test-question">
-              <h3>${currentQuestionIndex + 1}. ${currentQuestion.question}</h3>
-              <div class="test-options">
-                  ${currentQuestion.options
-                    .map(
-                      (option, optionIndex) => `
-                      <div class="test-option">
-                          <label>
-                              <input type="radio" name="current-question" value="${optionIndex}" ${userAnswers[currentQuestionIndex] === optionIndex ? "checked" : ""}>
-                              ${option}
-                          </label>
-                      </div>
-                  `,
-                    )
-                    .join("")}
-              </div>
-          </div>
-      `
+  const question = currentTest.questions[currentQuestionIndex]
+  const testContent = document.getElementById("test-content")
+  
+  // Оновлюємо номер поточного питання
+  document.getElementById("current-question").textContent = currentQuestionIndex + 1
+  
+  // Оновлюємо прогрес-бар
+  const progressFill = document.querySelector(".progress-fill")
+  const progressPercentage = ((currentQuestionIndex + 1) / currentTest.questions.length) * 100
+  progressFill.style.width = `${progressPercentage}%`
 
-  // Add animation
-  testContent.classList.add("fade-in")
-  setTimeout(() => {
-    testContent.classList.remove("fade-in")
-  }, 500)
+  // Відображаємо питання з варіантами відповідей
+  testContent.innerHTML = `
+    <div class="question-container">
+      <div class="question-header">
+        <span class="question-number">Питання ${currentQuestionIndex + 1} з ${currentTest.questions.length}</span>
+      </div>
+      <h3 class="question-text">${question.question}</h3>
+      <div class="answers-container">
+        ${question.options
+          .map(
+            (option, index) => `
+          <label class="answer-option ${userAnswers[currentQuestionIndex] === index ? "selected" : ""}">
+            <input 
+              type="radio" 
+              name="answer" 
+              value="${index}" 
+              ${userAnswers[currentQuestionIndex] === index ? "checked" : ""}
+            >
+            <span class="answer-indicator">
+              <span class="answer-number">${String.fromCharCode(65 + index)}</span>
+            </span>
+            <span class="answer-text">${option}</span>
+          </label>
+        `,
+          )
+          .join("")}
+      </div>
+    </div>
+  `
+
+  // Додаємо обробники подій для вибору відповіді
+  const answerOptions = testContent.querySelectorAll(".answer-option")
+  answerOptions.forEach((option) => {
+    option.addEventListener("click", function () {
+      answerOptions.forEach((opt) => opt.classList.remove("selected"))
+      this.classList.add("selected")
+      const radio = this.querySelector('input[type="radio"]')
+      radio.checked = true
+      userAnswers[currentQuestionIndex] = parseInt(radio.value)
+    })
+  })
+
+  // Оновлюємо стан кнопок навігації
+  updateNavigationButtons()
+}
+
+function updateNavigationButtons() {
+  const prevButton = document.getElementById("prev-question")
+  const nextButton = document.getElementById("next-question")
+  const submitButton = document.getElementById("submit-test")
+
+  if (!prevButton || !nextButton || !submitButton) return
+
+  // Кнопка "Попереднє" активна тільки якщо не перше питання
+  prevButton.disabled = currentQuestionIndex === 0
+
+  // На останньому питанні показуємо кнопку "Відправити"
+  if (currentQuestionIndex === currentTest.questions.length - 1) {
+    nextButton.style.display = "none"
+    submitButton.style.display = "inline-flex"
+  } else {
+    nextButton.style.display = "inline-flex"
+    submitButton.style.display = "none"
+  }
+}
+
+function saveCurrentAnswer() {
+  const selectedAnswer = document.querySelector('input[name="answer"]:checked')
+  if (selectedAnswer) {
+    userAnswers[currentQuestionIndex] = parseInt(selectedAnswer.value)
+  }
+}
+
+function nextQuestion() {
+  saveCurrentAnswer()
+  if (currentQuestionIndex < currentTest.questions.length - 1) {
+    currentQuestionIndex++
+    showCurrentQuestion()
+  }
+}
+
+function previousQuestion() {
+  saveCurrentAnswer()
+  if (currentQuestionIndex > 0) {
+    currentQuestionIndex--
+    showCurrentQuestion()
+  }
 }
 
 function submitTest() {
   saveCurrentAnswer()
 
+  // Перевіряємо відповіді, використовуючи оригінальні індекси
   const results = currentTest.questions.map((question, index) => ({
     question: question.question,
     userAnswer: userAnswers[index] !== -1 ? question.options[userAnswers[index]] : "Не відповіли",
-    correctAnswer: question.options[question.correctAnswer],
-    isCorrect: userAnswers[index] === question.correctAnswer,
+    correctAnswer: question.options[originalCorrectAnswers[index]],
+    isCorrect: userAnswers[index] === originalCorrectAnswers[index],
   }))
 
   displayTestResults(results)
@@ -671,39 +701,73 @@ function displayTestResults(results) {
   const totalQuestions = results.length
   const scorePercentage = Math.round((correctCount / totalQuestions) * 100)
 
-  // Update score circle
+  // Оновлюємо відсоток у колі
   document.querySelector(".score-number").textContent = `${scorePercentage}%`
 
-  // Add appropriate color based on score
+  // Змінюємо колір кола залежно від результату
   const scoreCircle = document.querySelector(".score-circle")
   if (scorePercentage >= 80) {
-    scoreCircle.style.borderColor = "var(--success-color)"
+    scoreCircle.style.borderColor = "#68d391"
   } else if (scorePercentage >= 50) {
-    scoreCircle.style.borderColor = "var(--warning-color)"
+    scoreCircle.style.borderColor = "#f6ad55"
   } else {
-    scoreCircle.style.borderColor = "var(--error-color)"
+    scoreCircle.style.borderColor = "#fc8181"
   }
 
+  // Відображаємо детальні результати
   testResults.innerHTML = `
-          <h3>Ви відповіли правильно на ${correctCount} з ${totalQuestions} питань.</h3>
-          ${results
-            .map(
-              (result, index) => `
-              <p class="${result.isCorrect ? "correct" : "incorrect"}">
-                  ${index + 1}. ${result.question}<br>
-                  Ваша відповідь: ${result.userAnswer}<br>
-                  ${!result.isCorrect ? `Правильна відповідь: ${result.correctAnswer}` : ""}
+    <div class="results-summary">
+      <h3>Ви відповіли правильно на ${correctCount} з ${totalQuestions} питань</h3>
+    </div>
+    <div class="results-list">
+      ${results
+        .map(
+          (result, index) => `
+          <div class="result-item ${result.isCorrect ? "correct" : "incorrect"}">
+            <div class="result-icon">
+              ${result.isCorrect ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-times-circle"></i>'}
+            </div>
+            <div class="result-content">
+              <p class="result-question"><strong>Питання ${index + 1}:</strong> ${result.question}</p>
+              <p class="result-answer">
+                <strong>Ваша відповідь:</strong> ${result.userAnswer}
               </p>
-          `,
-            )
-            .join("")}
-      `
+              ${!result.isCorrect ? `<p class="result-correct"><strong>Правильна відповідь:</strong> ${result.correctAnswer}</p>` : ""}
+            </div>
+          </div>
+        `,
+        )
+        .join("")}
+    </div>
+  `
 
+  // Якщо результат >= 80%, показуємо посилання на сертифікат
+  if (scorePercentage >= 80) {
+    const certificateLink = document.createElement('div')
+    certificateLink.className = 'certificate-link-container'
+    certificateLink.innerHTML = `
+      <div class="certificate-success">
+        <i class="fas fa-trophy"></i>
+        <h4>Вітаємо! Ви успішно пройшли тест!</h4>
+        <p>Ви набрали ${scorePercentage}% і можете отримати сертифікат</p>
+        <a href="certificates.html" class="cta-button primary">
+          <span class="cta-text">Отримати сертифікат</span>
+          <span class="cta-icon"><i class="fas fa-certificate"></i></span>
+        </a>
+      </div>
+    `
+    testResults.appendChild(certificateLink)
+  }
+
+  // Закриваємо модальне вікно тесту і відкриваємо модальне вікно результатів
   document.getElementById("test-modal").style.display = "none"
   document.getElementById("result-modal").style.display = "block"
 
-  saveTestProgress(scorePercentage)
+  // Зберігаємо прогрес (бали з 50)
+  const scoreOutOf50 = Math.round((correctCount / totalQuestions) * 50)
+  saveTestProgress(scoreOutOf50)
 
+  // Показуємо відповідне повідомлення
   if (correctCount === totalQuestions) {
     showToast("Вітаємо! Ви успішно засвоїли тему!", "success")
   } else if (scorePercentage >= 80) {
@@ -720,13 +784,6 @@ function retryTest() {
   startTest()
 }
 
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[array[i], array[j]] = [array[j], array[i]]
-  }
-}
-
 // Contact Form
 function setupContactForm() {
   const form = document.getElementById("contact-form")
@@ -735,14 +792,12 @@ function setupContactForm() {
   form.addEventListener("submit", async (e) => {
     e.preventDefault()
 
-    // Додаємо анімацію завантаження
     const submitBtn = form.querySelector(".submit-button")
     const originalText = submitBtn.innerHTML
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Надсилання...'
     submitBtn.disabled = true
 
     try {
-      // Імітація відправки форми
       await new Promise((resolve) => setTimeout(resolve, 1500))
       showToast("Повідомлення надіслано успішно!", "success")
       form.reset()
@@ -794,23 +849,23 @@ function setupStatsCounter() {
 // Toast function
 function showToast(message, type = "success") {
   const toast = document.getElementById("toast")
+  if (!toast) return
+
   toast.textContent = message
 
   // Set color based on type
   if (type === "success") {
-    toast.style.backgroundColor = "var(--success-color)"
+    toast.style.backgroundColor = "#68d391"
   } else if (type === "error") {
-    toast.style.backgroundColor = "var(--error-color)"
+    toast.style.backgroundColor = "#fc8181"
   } else if (type === "warning") {
-    toast.style.backgroundColor = "var(--warning-color)"
-    toast.style.color = "var(--background-color)"
+    toast.style.backgroundColor = "#f6ad55"
+    toast.style.color = "#1a202c"
   } else if (type === "info") {
-    toast.style.backgroundColor = "var(--info-color)"
+    toast.style.backgroundColor = "#4299e1"
   }
 
   toast.style.display = "block"
-
-  // Add animation
   toast.classList.add("fade-in")
 
   setTimeout(() => {
@@ -826,11 +881,9 @@ function setupLessonFilter() {
     button.addEventListener("click", () => {
       const filter = button.dataset.filter
 
-      // Update active button
       filterButtons.forEach((btn) => btn.classList.remove("active"))
       button.classList.add("active")
 
-      // Filter lessons
       const lessonCards = document.querySelectorAll(".lesson-card")
 
       lessonCards.forEach((card) => {
@@ -845,24 +898,20 @@ function setupLessonFilter() {
 }
 
 function checkAuthStatus() {
-  const token = localStorage.getItem("authToken")
+  const token = localStorage.getItem("token")
   const authButton = document.querySelector(".auth-button")
   const profileButton = document.querySelector(".profile-button")
   const logoutButton = document.querySelector(".logout-button")
 
   if (token) {
-    // User is logged in
-    authButton.style.display = "none"
-    profileButton.style.display = "inline-block"
-    logoutButton.style.display = "inline-block"
-
-    // Verify token with server
+    if (authButton) authButton.style.display = "none"
+    if (profileButton) profileButton.style.display = "inline-block"
+    if (logoutButton) logoutButton.style.display = "inline-block"
     verifyToken(token)
   } else {
-    // User is not logged in
-    authButton.style.display = "inline-block"
-    profileButton.style.display = "none"
-    logoutButton.style.display = "none"
+    if (authButton) authButton.style.display = "inline-block"
+    if (profileButton) profileButton.style.display = "none"
+    if (logoutButton) logoutButton.style.display = "none"
   }
 }
 
@@ -877,8 +926,7 @@ async function verifyToken(token) {
     })
 
     if (!response.ok) {
-      // Token is invalid, remove it
-      localStorage.removeItem("authToken")
+      localStorage.removeItem("token")
       localStorage.removeItem("userData")
       checkAuthStatus()
       return
@@ -887,37 +935,35 @@ async function verifyToken(token) {
     const data = await response.json()
     localStorage.setItem("userData", JSON.stringify(data.user))
 
-    // Update profile button text with user name
     const profileButton = document.querySelector(".profile-button")
     if (profileButton && data.user.name) {
       profileButton.innerHTML = `<i class="fas fa-user"></i> ${data.user.name}`
     }
   } catch (error) {
     console.error("Token verification failed:", error)
-    localStorage.removeItem("authToken")
+    localStorage.removeItem("token")
     localStorage.removeItem("userData")
     checkAuthStatus()
   }
 }
 
 function logout() {
-  localStorage.removeItem("authToken")
+  localStorage.removeItem("token")
   localStorage.removeItem("userData")
   checkAuthStatus()
   showToast("Ви успішно вийшли з системи", "info")
+  setTimeout(() => {
+    window.location.href = "index.html"
+  }, 1000)
 }
 
-// Save test progress to server
 async function saveTestProgress(score) {
-  const token = localStorage.getItem("authToken")
+  const token = localStorage.getItem("token")
   if (!token || !currentLesson) {
-    console.log("[v0] No auth token or current lesson, skipping progress save")
     return
   }
 
   try {
-    console.log("[v0] Saving progress for lesson:", currentLesson.id, "with score:", score)
-
     const response = await fetch(`/api/lessons/${currentLesson.id}/complete`, {
       method: "POST",
       headers: {
@@ -928,59 +974,40 @@ async function saveTestProgress(score) {
     })
 
     if (response.ok) {
-      console.log("[v0] Progress saved successfully")
       showToast("Прогрес збережено!", "success")
-
-      // Update local storage with new progress
-      updateLocalProgress(currentLesson.id, score)
+      // Перезавантажуємо прогрес після збереження
+      await loadUserProgress()
     } else {
-      console.error("[v0] Failed to save progress:", response.status)
       showToast("Помилка збереження прогресу", "error")
     }
   } catch (error) {
-    console.error("[v0] Error saving progress:", error)
+    console.error("Error saving progress:", error)
     showToast("Помилка збереження прогресу", "error")
   }
 }
 
-// Update local progress data
-function updateLocalProgress(lessonId, score) {
-  const progress = JSON.parse(localStorage.getItem("userProgress") || "{}")
-
-  progress[lessonId] = {
-    completed: true,
-    score: score,
-    completedAt: new Date().toISOString(),
-  }
-
-  localStorage.setItem("userProgress", JSON.stringify(progress))
-  console.log("[v0] Local progress updated:", progress)
-}
-
-// Load user progress on page load
 async function loadUserProgress() {
-  const token = localStorage.getItem("authToken")
+  const token = localStorage.getItem("token")
   if (!token) {
-    console.log("[v0] No auth token, skipping progress load")
     return
   }
 
   try {
-    console.log("[v0] Loading user progress...")
-
-    const response = await fetch("/api/user/progress", {
+    // Додаємо timestamp для запобігання кешуванню
+    const timestamp = new Date().getTime()
+    const response = await fetch(`/api/user/progress?t=${timestamp}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
+        "Cache-Control": "no-cache"
       },
     })
 
     if (response.ok) {
       const progressData = await response.json()
-      console.log("[v0] Progress loaded successfully:", progressData)
 
-      // Store progress in localStorage for quick access
+      // Зберігаємо в localStorage
       localStorage.setItem("userProgress", JSON.stringify(progressData.lessons))
       localStorage.setItem(
         "userStats",
@@ -991,17 +1018,14 @@ async function loadUserProgress() {
         }),
       )
 
-      // Update lesson cards to show completion status
+      // Оновлюємо картки уроків
       updateLessonCards(progressData.lessons)
-    } else {
-      console.error("[v0] Failed to load progress:", response.status)
     }
   } catch (error) {
-    console.error("[v0] Error loading progress:", error)
+    console.error("Error loading progress:", error)
   }
 }
 
-// Update lesson cards with completion status
 function updateLessonCards(progressData) {
   const lessonCards = document.querySelectorAll(".lesson-card")
 
@@ -1010,13 +1034,13 @@ function updateLessonCards(progressData) {
     const lessonId = lessonButton?.dataset.id
 
     if (lessonId && progressData[lessonId] && progressData[lessonId].completed) {
-      // Add completed styling
       card.classList.add("completed")
 
-      // Update button text and add score
       const score = progressData[lessonId].score
+      const percentage = Math.round((score / 50) * 100)
+      
       lessonButton.innerHTML = `
-        <span class="cta-text">Завершено (${score}%)</span>
+        <span class="cta-text">Завершено (${percentage}%)</span>
         <span class="cta-icon"><i class="fas fa-check-circle"></i></span>
       `
       lessonButton.classList.add("completed")
