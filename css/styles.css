@@ -134,7 +134,7 @@ nav {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  max-width: 1200px;
+  /* removed max-width to allow full width expansion */
   margin: 0 auto;
 }
 
@@ -145,6 +145,8 @@ nav {
   font-weight: 700;
   font-size: 1.5rem;
   color: var(--foreground);
+  /* prevent logo from shrinking */
+  flex-shrink: 0;
 }
 
 .logo-icon {
@@ -155,8 +157,12 @@ nav {
 .nav-links {
   display: flex;
   list-style: none;
-  gap: 2rem;
+  /* reduced gap from 2rem to 1.5rem for more compact spacing */
+  gap: 1.5rem;
   align-items: center;
+  /* allow nav-links to take available space */
+  flex: 1;
+  justify-content: center;
 }
 
 .nav-button {
@@ -169,6 +175,8 @@ nav {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  /* prevent text wrapping */
+  white-space: nowrap;
 }
 
 .nav-button:hover {
